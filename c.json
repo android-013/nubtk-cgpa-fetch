@@ -1,0 +1,1 @@
+"mkdir nubtk-check\ncd nubtk-check\nnpm init -y\nnpm install puppeteer"

@@ -2,7 +2,7 @@ const puppeteer = require("puppeteer");
 
 const baseUrl = "https://nubtkhulna.ac.bd/ter";
 const startId = 1061;
-const endId = 1200;
+const endId = 1100;
 
 (async () => {
     const browser = await puppeteer.launch({ headless: true });
@@ -39,14 +39,29 @@ const endId = 1200;
 
                 // Extract name and CGPA
                 const data = await page.evaluate(() => {
-                    const nameCell = [...document.querySelectorAll("td")]
-                        .find(td => td.textContent.trim().match(/^[A-Za-z\s\.]+$/));
-                    const cgpaCell = [...document.querySelectorAll("b")]
-                        .find(b => b.textContent.match(/^\d+\.\d{1,3}$/));
-                    return {
-                        name: nameCell?.textContent?.trim() || "Unknown",
-                        cgpa: cgpaCell?.textContent?.trim() || "N/A"
-                    };
+                    let name = "Unknown";
+                    let cgpa = "N/A";
+
+                    const rows = document.querySelectorAll("table.table-bordered.table-striped tbody tr");
+
+                    rows.forEach(row => {
+                        const ths = row.querySelectorAll("th");
+                        const tds = row.querySelectorAll("td");
+
+                        for (let i = 0; i < ths.length; i++) {
+                            const label = ths[i].textContent.trim();
+                            if (label === "Name :") {
+                                name = tds[i]?.textContent?.trim() || "Unknown";
+                            }
+                        }
+                    });
+
+                    const cgpaMatch = document.body.innerHTML.match(/CGPA\s*:<\/b><\/td>\s*<td[^>]*><b>([\d.]+)<\/b>/);
+                    if (cgpaMatch) {
+                        cgpa = cgpaMatch[1];
+                    }
+
+                    return { name, cgpa };
                 });
 
                 unchanged.push({ id: userId, ...data });
