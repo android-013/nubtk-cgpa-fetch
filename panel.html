@@ -1,0 +1,174 @@
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Northern University of Business & Technology Khulna | Dashboard</title>
+        <link href="https://nubtkhulna.ac.bd/ter/assets/css/application.min.css" rel="stylesheet">
+        <link href="https://nubtkhulna.ac.bd/ter/assets/css/custom.css" rel="stylesheet">
+        <link rel="shortcut icon" href="https://nubtkhulna.ac.bd/ter/assets/img/favicon.ico">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<script src="https://nubtkhulna.ac.bd/ter/assets/js/custom-ajax.js"></script>
+        <meta charset="utf-8">
+        <script>
+			var baseurl = 'https://nubtkhulna.ac.bd/ter/';
+            /* yeah we need this empty stylesheet here. It's cool chrome & chromium fix
+               chrome fix https://code.google.com/p/chromium/issues/detail?id=167083
+            			  https://code.google.com/p/chromium/issues/detail?id=332189
+            */
+        </script>
+    </head>
+    <body class="background-dark">
+        <div class="logo">
+			<h1><font color="#FF8404">Northern University of Business & Technology Khulna</font></h1>
+		</div>
+        <nav id="sidebar" class="sidebar nav-collapse collapse">
+            <ul id="side-nav" class="side-nav">
+                <li class="active">
+                    <a href="https://nubtkhulna.ac.bd/ter/panel"><i class="fa fa-bars"></i> <span class="name">TER</span></a>
+                </li>
+				<li class="">
+                    <a href="https://nubtkhulna.ac.bd/ter/panel/finance"><i class="fa fa-bars"></i> <span class="name">Finance</span></a>
+                </li>
+				<li class="">
+                    <a href="https://nubtkhulna.ac.bd/ter/panel/result"><i class="fa fa-bars"></i> <span class="name">Result</span></a>
+                </li>
+	       <li class="">
+                    <a target="_blank" href="https://nubtkhulna.ac.bd/ter/panel/overallresult"><i class="fa fa-bars"></i> <span class="name">Overall Result</span></a>
+                </li>
+            </ul>
+        </nav>
+        <div class="wrap">
+            <header class="page-header">
+                <div class="navbar">
+                    <ul class="nav navbar-nav navbar-right pull-right">
+                        <li class="hidden-xs dropdown">
+                            <a href="#" title="Account" id="account" class="dropdown-toggle" data-toggle="dropdown">
+								<i class="fa fa-cog"></i>
+                            </a>
+                            <ul id="account-menu" class="dropdown-menu account" role="menu">
+                                <li role="presentation" class="account-picture">
+                                    <img src="https://nubtkhulna.ac.bd/ter/" onError="this.src='https://nubtkhulna.ac.bd/ter/assets/img/noimages.png';"> <br />
+                                    S.M. Fahad Mahmud                                </li>
+                                <li role="presentation">
+                                    <a href="https://nubtkhulna.ac.bd/ter/panel/profile" class="link">
+                                    <i class="fa fa-user"></i>
+                                    Profile
+                                    </a>
+                                </li>
+                                <li role="presentation">
+                                    <a href="https://nubtkhulna.ac.bd/ter/sleep" class="link">
+                                    <i class="fa fa-life-ring"></i>
+                                    Sleep Mode
+                                    </a>
+                                </li>
+								<li role="presentation">
+                                    <a href="https://nubtkhulna.ac.bd/ter/login/signout" class="link">
+                                    <i class="fa fa-stumbleupon"></i>
+                                    Sign Out
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="visible-xs">
+                            <a href="#" class="btn-navbar" data-toggle="collapse" data-target=".sidebar" title="">
+								<i class="fa fa-bars"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </header>
+            <div class="content container">
+                <h2 class="page-title"></h2>
+<style type="text/css"> 
+	.label{
+		padding-top: 5px;
+		float:left;width:42%;font-size:20px;text-align:right;
+		color#FF8404;
+	}
+	.semester{
+		float:left;width:30%;
+		border-radius:4px;
+		border:0;
+		background:#616A64;
+	}
+	.semester option{
+		padding:3px;
+	}
+</style>
+<div class="row">
+	<div class="col-lg-10">
+		<section class="widget">
+			<header>
+				<center>
+					<h3>Teaching Efficiency Rating (TER)</h3>
+					<h4></h4>
+				</center>
+			</header>
+			<div class="body no-margin">
+				<div class="row">
+					<div class="col-lg-8 col-lg-offset-2">
+						<div class="form-group" style="padding:10px;margin:10px;">
+							<form action="https://nubtkhulna.ac.bd/ter/panel" name="semester" method="get">
+								<label for="semester" class="label">Session : </label>
+								<select id="semester" name="semester" class="semester input-transparent" onchange="this.form.submit();">
+																		<option selected value="U3ByaW5nIDIwMjA=">Spring 2020</option>
+																		<option  value="RmFsbCAyMDE5">Fall 2019</option>
+																		<option  value="U3ByaW5nIDIwMTk=">Spring 2019</option>
+																		<option  value="RmFsbCAyMDE4">Fall 2018</option>
+																		<option  value="U3ByaW5nIDIwMTg=">Spring 2018</option>
+																		<option  value="RmFsbCAyMDE3">Fall 2017</option>
+																		<option  value="U3ByaW5nIDIwMTc=">Spring 2017</option>
+																		<option  value="RmFsbCAyMDE2">Fall 2016</option>
+																	</select>
+							</form>
+						</div> <br />
+						<p>You are not able to see your Result and Finance without fill up TER. <font color="FF8404">Pending Course</font> are</p>
+						<form action="https://nubtkhulna.ac.bd/ter/ter-form" name="ter-form" method="get">
+							<table class="table table-striped table-bordered table-hover">
+								<tbody>
+																</tbody>
+							</table>
+						</form>
+						<br>
+					</div>
+				</div>
+			</div>
+		</section>
+	</div>
+</div>				<hr />
+				<div class="row box box-success col-lg-10 col-xs-10" style="padding:5px; margin: 0px; ">
+	<div style="padding: 0px;" class="col-lg-5 col-xs-6">
+		<!-- small box -->
+		<div class="small-box bg-green">
+			&copy; 2015 
+			<a href="http://www.nub.ac.bd" class="small-box-footer">                                  
+				Northern University of Business & Technology Khulna.
+			</a>
+			 &nbsp;&nbsp; All Rights Reserved.
+		</div>
+	</div><!-- ./col -->
+	<div style="float:right;padding: 0px;text-align:right;" class="col-lg-5 col-xs-6">
+		<!-- small box -->
+		<div class="small-box bg-green">
+			Designed & Developed By : 
+			<a href="http://www.businesslimb.com" target="_blank" class="small-box-footer">
+				Business Limb Ltd &nbsp;
+			</a>
+		</div>
+	</div><!-- ./col -->
+</div>            </div>
+            <div class="loader-wrap hiding hide">
+                <i class="fa fa-circle-o-notch fa-spin"></i>
+            </div>
+        </div>
+        <!-- common libraries. required for every page-->
+        <script src="https://nubtkhulna.ac.bd/ter/assets/lib/jquery/dist/jquery.min.js"></script>
+        <script src="https://nubtkhulna.ac.bd/ter/assets/lib/jquery-pjax/jquery.pjax.js"></script>
+        <script src="https://nubtkhulna.ac.bd/ter/assets/lib/bootstrap-sass/assets/javascripts/bootstrap.min.js"></script>
+        <script src="https://nubtkhulna.ac.bd/ter/assets/lib/widgster/widgster.js"></script>
+        <script src="https://nubtkhulna.ac.bd/ter/assets/lib/underscore/underscore.js"></script>
+        <!-- common application js -->
+        <script src="https://nubtkhulna.ac.bd/ter/assets/js/app.js"></script>
+        <script src="https://nubtkhulna.ac.bd/ter/assets/js/settings.js"></script>
+</body>
+</html>
