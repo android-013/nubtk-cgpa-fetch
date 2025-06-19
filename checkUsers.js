@@ -1,9 +1,9 @@
 const puppeteer = require("puppeteer");
 
 const baseUrl = "https://nubtkhulna.ac.bd/ter";
-const department = "CSE"; // Change this to your department code
+const department = "EEE"; // Change this to your department code
 const rollStart = 1;
-const rollEnd = 500;
+const rollEnd = 999;
 
 (async () => {
     const browser = await puppeteer.launch({ headless: true });
@@ -83,7 +83,7 @@ const rollEnd = 500;
                     }
 
                     if (failureCount >= 20) {
-                        console.log(`🚫 20 consecutive failures in session ${session}, moving to next.`);
+                        console.log(`🚫 consecutive failures in session ${session}, moving to next.`);
                         skipSession = true;
                         break;
                     }
@@ -91,7 +91,7 @@ const rollEnd = 500;
                     failureCount++;
                     console.error(`⏱️ Timeout or error with ${userId}: ${err.message}`);
                     if (failureCount >= 20) {
-                        console.log(`🚫 20 consecutive failures in session ${session}, moving to next.`);
+                        console.log(`🚫 consecutive failures in session ${session}, moving to next.`);
                         skipSession = true;
                         break;
                     }
