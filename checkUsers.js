@@ -1,9 +1,22 @@
 const puppeteer = require("puppeteer");
+const fs = require("fs");
 
 const baseUrl = "https://nubtkhulna.ac.bd/ter";
-const department = "EEE"; // Change this to your department code
+const department = "EEE";
 const rollStart = 1;
 const rollEnd = 999;
+
+const retry = async (fn, retries = 3, delay = 2000) => {
+    for (let i = 0; i < retries; i++) {
+        try {
+            return await fn();
+        } catch (err) {
+            if (i === retries - 1) throw err;
+            console.warn(`⚠️ Retry ${i + 1} due to: ${err.message}`);
+            await new Promise(res => setTimeout(res, delay));
+        }
+    }
+};
 
 (async () => {
     const browser = await puppeteer.launch({ headless: true });
@@ -15,7 +28,6 @@ const rollEnd = 999;
         for (const term of ["01", "03"]) {
             const session = `${year}${term}`;
             let failureCount = 0;
-
             let skipSession = false;
 
             console.log(`\n🚀 Starting session: ${session}\n`);
@@ -29,7 +41,7 @@ const rollEnd = 999;
                 await page.setDefaultNavigationTimeout(20000);
 
                 try {
-                    await page.goto(`${baseUrl}/login`, { waitUntil: "domcontentloaded" });
+                    await retry(() => page.goto(`${baseUrl}/login`, { waitUntil: "domcontentloaded" }));
 
                     await page.type("#username", userId);
                     await page.type("#password", userId);
@@ -44,9 +56,9 @@ const rollEnd = 999;
                         failureCount = 0;
                         lastSuccessRoll = roll + 1;
 
-                        await page.goto(`${baseUrl}/panel/overallresult`, {
+                        await retry(() => page.goto(`${baseUrl}/panel/overallresult`, {
                             waitUntil: "domcontentloaded"
-                        });
+                        }));
 
                         const data = await page.evaluate(() => {
                             let name = "Unknown";
@@ -76,7 +88,7 @@ const rollEnd = 999;
 
                         unchanged.push({ id: userId, ...data });
 
-                        await page.goto(`${baseUrl}/login/signout`, { waitUntil: "domcontentloaded" });
+                        await retry(() => page.goto(`${baseUrl}/login/signout`, { waitUntil: "domcontentloaded" }));
                     } else {
                         failureCount++;
                         console.log(`❌ Login failed: ${userId}`);
@@ -104,11 +116,16 @@ const rollEnd = 999;
                 }
 
                 if (skipSession) break;
+
+                await new Promise(res => setTimeout(res, 500)); // throttle
             }
         }
     }
 
     await browser.close();
+
     console.log("\n📋 Final Report:");
     console.table(unchanged);
+
+    fs.writeFileSync("results.json", JSON.stringify(unchanged, null, 2));
 })();
