@@ -5,7 +5,7 @@ const fs = require("fs");
 const baseUrl = "https://nubtkhulna.ac.bd/ter";
 const years = [16, 17, 18, 19, 20]; // 16 to 20
 const terms = ["01", "03"];
-const rollEnd = 20;
+const rollEnd = 10;
 const resultsFilePath = "found_departments.json";
 
 // --- Helper function to retry failed operations ---
