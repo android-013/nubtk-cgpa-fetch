@@ -3,7 +3,7 @@ const fs = require("fs");
 
 // --- Configuration ---
 const baseUrl = "https://nubtkhulna.ac.bd/ter";
-const years = [16,17,18,19,20];
+const years = [16, 17, 18, 19, 20]; // 16 to 20
 const terms = ["01", "03"];
 const rollEnd = 20;
 const resultsFilePath = "found_departments.json";
@@ -37,10 +37,9 @@ const retry = async (fn, retries = 2, delay = 1500) => {
 
     // Labeled loop to allow breaking out and continuing to the next department
     departmentLoop:
-    // Start with 'eee' (e=101)
-    for (let i = 101; i <= 122; i++) { // e-z
-        for (let j = (i === 101 ? 101 : 97); j <= 122; j++) { // e-z if i==e, else a-z
-            for (let k = (i === 101 && j === 101 ? 101 : 97); k <= 122; k++) { // e-z if i==e && j==e, else a-z
+    for (let i = 97; i <= 122; i++) { // a-z
+        for (let j = 97; j <= 122; j++) { // a-z
+            for (let k = 97; k <= 122; k++) { // a-z
                 const department = (String.fromCharCode(i) + String.fromCharCode(j) + String.fromCharCode(k)).toUpperCase();
 
                 if (foundDepartments.some(d => d.department === department)) {
