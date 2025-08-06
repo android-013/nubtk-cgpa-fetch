@@ -85,7 +85,7 @@ const resultsFilePath = "found_departments.json";
                             foundDepartments.push({ department });
                             checkedDepts.add(department);
                             fsModule.writeFileSync(resultsFilePath, JSON.stringify(foundDepartments, null, 2));
-                            console.log(`💾 Saved to ${resultsFilePath}. Stopping search for this department.\n`);
+                            console.log(`\n\n\n📅➡️💾 Saved to ${resultsFilePath}. Stopping search for this department.\n\n\n`);
                         }
                     } catch (error) {
                         // Ignore errors, just means this ID failed. The worker will continue.

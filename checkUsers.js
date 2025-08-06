@@ -2,7 +2,7 @@ const puppeteer = require("puppeteer");
 const fs = require("fs");
 
 const baseUrl = "https://nubtkhulna.ac.bd/ter";
-const department = "ENG";
+const department = "JMC";
 const rollStart = 1;
 const rollEnd = 999;
 

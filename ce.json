@@ -1,0 +1,632 @@
+[
+  {
+    "id": "CE170320001",
+    "name": "Md. Mueedur Rahman",
+    "cgpa": "3.649"
+  },
+  {
+    "id": "CE170320002",
+    "name": "Md. Ali Reza",
+    "cgpa": "0"
+  },
+  {
+    "id": "CE170320003",
+    "name": "Jyoti Prakash Dhali",
+    "cgpa": "0"
+  },
+  {
+    "id": "CE170320004",
+    "name": "Sanjib Mondal",
+    "cgpa": "0"
+  },
+  {
+    "id": "CE170320005",
+    "name": "Tanmoy Biswas",
+    "cgpa": "0"
+  },
+  {
+    "id": "CE170320006",
+    "name": "Md. Imran Sharif",
+    "cgpa": "0"
+  },
+  {
+    "id": "CE170320008",
+    "name": "Md. Monimul Islam Kiron",
+    "cgpa": "0"
+  },
+  {
+    "id": "CE170320009",
+    "name": "Mst. Fatima Tuze Johora",
+    "cgpa": "0"
+  },
+  {
+    "id": "CE170320011",
+    "name": "Md. Salman Khan Shouvo",
+    "cgpa": "0"
+  },
+  {
+    "id": "CE170320012",
+    "name": "Md. Shamim",
+    "cgpa": "0"
+  },
+  {
+    "id": "CE170320014",
+    "name": "Md. Bahauddin Faruque",
+    "cgpa": "0"
+  },
+  {
+    "id": "CE170320015",
+    "name": "Kazi Azmir Ahmed",
+    "cgpa": "0"
+  },
+  {
+    "id": "CE170320016",
+    "name": "Mostafa Mobinullah",
+    "cgpa": "0"
+  },
+  {
+    "id": "CE170320017",
+    "name": "Raju Ahmed",
+    "cgpa": "0"
+  },
+  {
+    "id": "CE170320018",
+    "name": "Md. Alamgir Kabir",
+    "cgpa": "0"
+  },
+  {
+    "id": "CE170320019",
+    "name": "Mita Nur",
+    "cgpa": "0"
+  },
+  {
+    "id": "CE170320020",
+    "name": "Most. Monira Khatun",
+    "cgpa": "0"
+  },
+  {
+    "id": "CE170320021",
+    "name": "Md. Matynul Hamid",
+    "cgpa": "0"
+  },
+  {
+    "id": "CE170320022",
+    "name": "Mukta",
+    "cgpa": "0"
+  },
+  {
+    "id": "CE170320023",
+    "name": "Md. walid Khan",
+    "cgpa": "0"
+  },
+  {
+    "id": "CE170320024",
+    "name": "Sk. Tarikul Islam",
+    "cgpa": "0"
+  },
+  {
+    "id": "CE170320026",
+    "name": "Sohag Golder",
+    "cgpa": "0"
+  },
+  {
+    "id": "CE170320030",
+    "name": "Shianu Mollick",
+    "cgpa": "0"
+  },
+  {
+    "id": "CE170320031",
+    "name": "Md. Millur Rahman",
+    "cgpa": "0"
+  },
+  {
+    "id": "CE170320032",
+    "name": "Md. Naimur Rahman",
+    "cgpa": "0"
+  },
+  {
+    "id": "CE170320033",
+    "name": "Md. Abdullah Al Mamoon",
+    "cgpa": "0"
+  },
+  {
+    "id": "CE170320034",
+    "name": "A.K.M Golam Zakaria",
+    "cgpa": "0"
+  },
+  {
+    "id": "CE170320038",
+    "name": "Md. Rubel Hosen",
+    "cgpa": "0"
+  },
+  {
+    "id": "CE170320040",
+    "name": "Md. Asif Hasan",
+    "cgpa": "0"
+  },
+  {
+    "id": "CE170320041",
+    "name": "Tariqul Islam",
+    "cgpa": "0"
+  },
+  {
+    "id": "CE170320042",
+    "name": "Tapos Kumar Ghosh",
+    "cgpa": "0"
+  },
+  {
+    "id": "CE170320043",
+    "name": "Md.Raju Howlader",
+    "cgpa": "0"
+  },
+  {
+    "id": "CE210320044",
+    "name": "Md. Mushfiqur Rahman Sweet",
+    "cgpa": "3.575"
+  },
+  {
+    "id": "CE210320045",
+    "name": "Md. Amanullah",
+    "cgpa": "3.353"
+  },
+  {
+    "id": "CE210320046",
+    "name": "Md. Jahir Rayhan",
+    "cgpa": "3.016"
+  },
+  {
+    "id": "CE210320047",
+    "name": "Chonchol Biswas",
+    "cgpa": "2.898"
+  },
+  {
+    "id": "CE210320048",
+    "name": "M.M. Mobasheer Hossain",
+    "cgpa": "3.32"
+  },
+  {
+    "id": "CE210320051",
+    "name": "Md. Golam Rabby",
+    "cgpa": "3.012"
+  },
+  {
+    "id": "CE220120052",
+    "name": "Kazi Arafat Rahman",
+    "cgpa": "2.772"
+  },
+  {
+    "id": "CE220120054",
+    "name": "Priyojit Bala",
+    "cgpa": "3.453"
+  },
+  {
+    "id": "CE220120058",
+    "name": "Md. Ashiquzzaman Anik",
+    "cgpa": "2.644"
+  },
+  {
+    "id": "CE220120059",
+    "name": "Sheikh Fahim Rahman Antu",
+    "cgpa": "3.434"
+  },
+  {
+    "id": "CE220120060",
+    "name": "Md Zubayer Ahamed",
+    "cgpa": "2.509"
+  },
+  {
+    "id": "CE220120062",
+    "name": "Debjoti Mondal",
+    "cgpa": "2.548"
+  },
+  {
+    "id": "CE220120063",
+    "name": "Md.Emon Ali",
+    "cgpa": "3.475"
+  },
+  {
+    "id": "CE220120064",
+    "name": "Amit Ghosh",
+    "cgpa": "2.324"
+  },
+  {
+    "id": "CE220320068",
+    "name": "S.M. Abir Amzad",
+    "cgpa": "2.879"
+  },
+  {
+    "id": "CE220320069",
+    "name": "Manabendra Sardar",
+    "cgpa": "3.455"
+  },
+  {
+    "id": "CE220320070",
+    "name": "Shashwata Mistry",
+    "cgpa": "3.965"
+  },
+  {
+    "id": "CE220320072",
+    "name": "Plabon Biswas",
+    "cgpa": "3.358"
+  },
+  {
+    "id": "CE220320073",
+    "name": "M.M. Mushfiqur Rahman Alif",
+    "cgpa": "2.995"
+  },
+  {
+    "id": "CE220320075",
+    "name": "Bidhayok Thander",
+    "cgpa": "2.553"
+  },
+  {
+    "id": "CE220320077",
+    "name": "Jabedur Rahman",
+    "cgpa": "2.534"
+  },
+  {
+    "id": "CE220320078",
+    "name": "Md. Inzamam Hossen Rony",
+    "cgpa": "2.505"
+  },
+  {
+    "id": "CE220320079",
+    "name": "Nion Rafael Mondol",
+    "cgpa": "3.964"
+  },
+  {
+    "id": "CE220320080",
+    "name": "Antu Ezarder",
+    "cgpa": "2.887"
+  },
+  {
+    "id": "CE220320081",
+    "name": "Rakia Sultana Mim",
+    "cgpa": "3.95"
+  },
+  {
+    "id": "CE220320082",
+    "name": "Sanat Mandal Joy",
+    "cgpa": "2.729"
+  },
+  {
+    "id": "CE220320084",
+    "name": "Nayan Mondal",
+    "cgpa": "2.694"
+  },
+  {
+    "id": "CE220320085",
+    "name": "Md Shariar Hossain Chowdhury",
+    "cgpa": "2.57"
+  },
+  {
+    "id": "CE230120087",
+    "name": "Md. Zakaria Hasan",
+    "cgpa": "2.551"
+  },
+  {
+    "id": "CE230120088",
+    "name": "Md. Fazlul Karim",
+    "cgpa": "3.448"
+  },
+  {
+    "id": "CE230120091",
+    "name": "Chowdhury Tanvir Ahmed Tamim",
+    "cgpa": "2.733"
+  },
+  {
+    "id": "CE230120092",
+    "name": "Md. Naim Hossen",
+    "cgpa": "2.906"
+  },
+  {
+    "id": "CE230120093",
+    "name": "M.A. Fahim",
+    "cgpa": "2.586"
+  },
+  {
+    "id": "CE230120095",
+    "name": "Rony Sardar",
+    "cgpa": "3.993"
+  },
+  {
+    "id": "CE230120097",
+    "name": "Ranobir Sikder",
+    "cgpa": "2.969"
+  },
+  {
+    "id": "CE230120100",
+    "name": "Md.Hridoy Sarder",
+    "cgpa": "2.884"
+  },
+  {
+    "id": "CE230320104",
+    "name": "Tasnia Islam",
+    "cgpa": "3.327"
+  },
+  {
+    "id": "CE230320105",
+    "name": "Peyal Hasan Molla",
+    "cgpa": "2.879"
+  },
+  {
+    "id": "CE230320109",
+    "name": "Shamiul Islam Shad",
+    "cgpa": "3.206"
+  },
+  {
+    "id": "CE230320110",
+    "name": "Tanvir Hosen Sham",
+    "cgpa": "0"
+  },
+  {
+    "id": "CE230320111",
+    "name": "Md. Rejoanul Islam Sawon",
+    "cgpa": "2.687"
+  },
+  {
+    "id": "CE230320112",
+    "name": "Md. Fahim Muntasir",
+    "cgpa": "2.587"
+  },
+  {
+    "id": "CE230320114",
+    "name": "Runit Kundu",
+    "cgpa": "2.843"
+  },
+  {
+    "id": "CE230320115",
+    "name": "Utsab Saha",
+    "cgpa": "2.836"
+  },
+  {
+    "id": "CE230320116",
+    "name": "Rakib Hossen",
+    "cgpa": "2.804"
+  },
+  {
+    "id": "CE230320117",
+    "name": "Sadi Muhammad Shazid",
+    "cgpa": "3.307"
+  },
+  {
+    "id": "CE230320119",
+    "name": "Ashikur Rahman Rupoj",
+    "cgpa": "2.727"
+  },
+  {
+    "id": "CE230320120",
+    "name": "Kaniz Fatema",
+    "cgpa": "3.375"
+  },
+  {
+    "id": "CE230320121",
+    "name": "G.M. Mahbub Alom",
+    "cgpa": "3.671"
+  },
+  {
+    "id": "CE230320122",
+    "name": "Abrar Haque Samin",
+    "cgpa": "3.425"
+  },
+  {
+    "id": "CE230320123",
+    "name": "Suman Kumar Dash",
+    "cgpa": "3.377"
+  },
+  {
+    "id": "CE230320124",
+    "name": "Ankita Sardar",
+    "cgpa": "3.673"
+  },
+  {
+    "id": "CE230320125",
+    "name": "Zubair Ahmed",
+    "cgpa": "3.061"
+  },
+  {
+    "id": "CE230320126",
+    "name": "Rony Mondal",
+    "cgpa": "2.423"
+  },
+  {
+    "id": "CE230320127",
+    "name": "S.M. Didarul Islam Santo",
+    "cgpa": "2.857"
+  },
+  {
+    "id": "CE230320128",
+    "name": "Shahriar Mukul Ayon",
+    "cgpa": "3.331"
+  },
+  {
+    "id": "CE230320131",
+    "name": "Sajib Mondal",
+    "cgpa": "3.239"
+  },
+  {
+    "id": "CE230320132",
+    "name": "Md. Wasi Uddin Rafi",
+    "cgpa": "3.658"
+  },
+  {
+    "id": "CE230320133",
+    "name": "Sabrina Momtaz",
+    "cgpa": "3.691"
+  },
+  {
+    "id": "CE230320134",
+    "name": "Badhon Biswas",
+    "cgpa": "2.897"
+  },
+  {
+    "id": "CE230320135",
+    "name": "Md. Tanvir Hossain Shanto",
+    "cgpa": "3.037"
+  },
+  {
+    "id": "CE230320136",
+    "name": "Md. Adnan Husain",
+    "cgpa": "2.818"
+  },
+  {
+    "id": "CE230320138",
+    "name": "Tisha Mondal",
+    "cgpa": "2.981"
+  },
+  {
+    "id": "CE230320139",
+    "name": "Muaz Ahmed Mahim",
+    "cgpa": "3.131"
+  },
+  {
+    "id": "CE230320140",
+    "name": "Rahul Khan",
+    "cgpa": "3.386"
+  },
+  {
+    "id": "CE230320141",
+    "name": "Shak Shaad Bin Alam",
+    "cgpa": "2.949"
+  },
+  {
+    "id": "CE230320142",
+    "name": "Chapal Mallick",
+    "cgpa": "2.25"
+  },
+  {
+    "id": "CE240120143",
+    "name": "Tapu Paul",
+    "cgpa": "3.171"
+  },
+  {
+    "id": "CE240120144",
+    "name": "Mashrafi Mojid Akib",
+    "cgpa": "3.438"
+  },
+  {
+    "id": "CE240120145",
+    "name": "Arif Ahmed Zaman",
+    "cgpa": "3.25"
+  },
+  {
+    "id": "CE240120147",
+    "name": "Akash Kumar",
+    "cgpa": "3.331"
+  },
+  {
+    "id": "CE240120149",
+    "name": "Janatara Rupa",
+    "cgpa": "2.855"
+  },
+  {
+    "id": "CE240320150",
+    "name": "Md. Mehedy Hasan",
+    "cgpa": "2.9"
+  },
+  {
+    "id": "CE240320151",
+    "name": "Raisa Fariama Epha",
+    "cgpa": "3.789"
+  },
+  {
+    "id": "CE240320152",
+    "name": "Alimuzzaman Rafin",
+    "cgpa": "3.426"
+  },
+  {
+    "id": "CE240320154",
+    "name": "Md. Muntasir Turzo",
+    "cgpa": "2.773"
+  },
+  {
+    "id": "CE240320155",
+    "name": "Umma Salma Nishat",
+    "cgpa": "3.833"
+  },
+  {
+    "id": "CE240320157",
+    "name": "Jannatul Fardous Mim",
+    "cgpa": "3.676"
+  },
+  {
+    "id": "CE240320158",
+    "name": "Ebtisam Sikder Efaz",
+    "cgpa": "2.846"
+  },
+  {
+    "id": "CE240320159",
+    "name": "Abdur Rafi",
+    "cgpa": "2.971"
+  },
+  {
+    "id": "CE240320160",
+    "name": "Farhana Moon",
+    "cgpa": "3.485"
+  },
+  {
+    "id": "CE240320161",
+    "name": "Zannatun Naim",
+    "cgpa": "3.733"
+  },
+  {
+    "id": "CE240320162",
+    "name": "Sadia Islam Joya",
+    "cgpa": "3.083"
+  },
+  {
+    "id": "CE240320163",
+    "name": "Hasibul Hasan",
+    "cgpa": "3.044"
+  },
+  {
+    "id": "CE240320166",
+    "name": "Sajid Mahmud",
+    "cgpa": "3.25"
+  },
+  {
+    "id": "CE240320167",
+    "name": "Ruhanur Rahman",
+    "cgpa": "3.794"
+  },
+  {
+    "id": "CE240320168",
+    "name": "Md.Shamim Ahmed",
+    "cgpa": "3.417"
+  },
+  {
+    "id": "CE240320169",
+    "name": "Saiful Islam",
+    "cgpa": "4"
+  },
+  {
+    "id": "CE240320170",
+    "name": "Md.Rashman Sarder",
+    "cgpa": "2.644"
+  },
+  {
+    "id": "CE240320173",
+    "name": "Meherin Trisha",
+    "cgpa": "3.275"
+  },
+  {
+    "id": "CE240320174",
+    "name": "Md Emon Hossain",
+    "cgpa": "3.897"
+  },
+  {
+    "id": "CE240320176",
+    "name": "Koushik Kumar Paul",
+    "cgpa": "2.435"
+  },
+  {
+    "id": "CE240320178",
+    "name": "Fatema Tuz Johora",
+    "cgpa": "2.799"
+  },
+  {
+    "id": "CE240320179",
+    "name": "Mrinmoy Ghosh",
+    "cgpa": "2.633"
+  }
+]
