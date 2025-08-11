@@ -2,9 +2,9 @@ const puppeteer = require("puppeteer");
 const fs = require("fs");
 
 const baseUrl = "https://nubtkhulna.ac.bd/ter";
-const department = "JMC";
-const rollStart = 1;
-const rollEnd = 999;
+const department = "ELL";
+const rollStart = 222;
+const rollEnd = 2000;
 
 const retry = async (fn, retries = 3, delay = 2000) => {
     for (let i = 0; i < retries; i++) {
@@ -24,7 +24,7 @@ const retry = async (fn, retries = 3, delay = 2000) => {
 
     let lastSuccessRoll = rollStart;
 
-    for (let year = 16; year <= 25; year++) {
+    for (let year = 20; year <= 25; year++) {
         for (const term of ["01", "03"]) {
             const session = `${year}${term}`;
             let failureCount = 0;
@@ -33,7 +33,7 @@ const retry = async (fn, retries = 3, delay = 2000) => {
             console.log(`\n🚀 Starting session: ${session}\n`);
 
             for (let roll = lastSuccessRoll; roll <= rollEnd; roll++) {
-                const rollCode = `20${String(roll).padStart(3, "0")}`;
+                const rollCode = `3${String(roll).padStart(4, "0")}`;
                 const userId = `${department}${session}${rollCode}`;
 
                 console.log(`🔍 Trying: ${userId}`);
