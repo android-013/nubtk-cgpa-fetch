@@ -5,6 +5,8 @@ const baseUrl = "https://nubtkhulna.ac.bd/ter";
 const department = "ELL";
 const rollStart = 222;
 const rollEnd = 2000;
+const failCheck = 120; // consecutive failures before skipping session
+let successCount = 0;
 
 const retry = async (fn, retries = 3, delay = 2000) => {
     for (let i = 0; i < retries; i++) {
@@ -55,6 +57,7 @@ const retry = async (fn, retries = 3, delay = 2000) => {
                         console.log(`✅ Login success: ${userId}`);
                         failureCount = 0;
                         lastSuccessRoll = roll + 1;
+                        successCount++;
 
                         await retry(() => page.goto(`${baseUrl}/panel/overallresult`, {
                             waitUntil: "domcontentloaded"
@@ -94,7 +97,7 @@ const retry = async (fn, retries = 3, delay = 2000) => {
                         console.log(`❌ Login failed: ${userId}`);
                     }
 
-                    if (failureCount >= 20) {
+                    if (failureCount >= failCheck) {
                         console.log(`🚫 consecutive failures in session ${session}, moving to next.`);
                         skipSession = true;
                         break;
@@ -102,7 +105,7 @@ const retry = async (fn, retries = 3, delay = 2000) => {
                 } catch (err) {
                     failureCount++;
                     console.error(`⏱️ Timeout or error with ${userId}: ${err.message}`);
-                    if (failureCount >= 20) {
+                    if (failureCount >= failCheck) {
                         console.log(`🚫 consecutive failures in session ${session}, moving to next.`);
                         skipSession = true;
                         break;
@@ -126,6 +129,10 @@ const retry = async (fn, retries = 3, delay = 2000) => {
 
     console.log("\n📋 Final Report:");
     console.table(unchanged);
+
+    console.log(`\nTotal successful logins: ${successCount}`);
+    console.log(`\nLast successful roll: ${lastSuccessRoll}`);
+    console.log(`\npercentage of success: ${((successCount/(lastSuccessRoll - rollStart)) * 100).toFixed(2)}%`);
 
     fs.writeFileSync("results.json", JSON.stringify(unchanged, null, 2));
 })();
