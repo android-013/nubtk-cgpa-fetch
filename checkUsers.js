@@ -130,9 +130,9 @@ const retry = async (fn, retries = 3, delay = 2000) => {
     console.log("\n📋 Final Report:");
     console.table(unchanged);
 
-    console.log(`\nTotal successful logins: ${successCount}`);
-    console.log(`\nLast successful roll: ${lastSuccessRoll}`);
-    console.log(`\npercentage of success: ${((successCount/(lastSuccessRoll - rollStart)) * 100).toFixed(2)}%`);
+    console.log(`\nTotal successful logins: ${successCount-1}`);
+    console.log(`\nLast successful roll: ${lastSuccessRoll-1}`);
+    console.log(`\npercentage of success: ${(((successCount-1)/((lastSuccessRoll-1) - rollStart)) * 100).toFixed(2)}%`);
 
     fs.writeFileSync("results.json", JSON.stringify(unchanged, null, 2));
 })();
