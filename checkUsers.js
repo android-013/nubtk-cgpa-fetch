@@ -2,10 +2,10 @@ const puppeteer = require("puppeteer");
 const fs = require("fs");
 
 const baseUrl = "https://nubtkhulna.ac.bd/ter";
-const department = "ELL";
+const department = "JMC";
 const rollStart = 0;
 const rollEnd = 2000;
-const failCheck = 120; // consecutive failures before skipping session
+const failCheck = 40; // consecutive failures before skipping session
 let successCount = 0;
 
 const retry = async (fn, retries = 3, delay = 2000) => {
@@ -26,7 +26,7 @@ const retry = async (fn, retries = 3, delay = 2000) => {
 
     let lastSuccessRoll = rollStart;
 
-    for (let year = 20; year <= 25; year++) {
+    for (let year = 16; year <= 25; year++) {
         for (const term of ["01", "03"]) {
             const session = `${year}${term}`;
             let failureCount = 0;
