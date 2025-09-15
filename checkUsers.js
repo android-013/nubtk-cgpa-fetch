@@ -2,10 +2,10 @@ const puppeteer = require("puppeteer");
 const fs = require("fs");
 
 const baseUrl = "https://nubtkhulna.ac.bd/ter";
-const department = "ELL";
+const department = "BBA"; 
 const rollStart = 0;
 const rollEnd = 2000;
-const failCheck = 40; // consecutive failures before skipping session
+const failCheck = 80; // consecutive failures before skipping session
 let successCount = 0;
 
 const retry = async (fn, retries = 3, delay = 2000) => {
@@ -36,7 +36,7 @@ const retry = async (fn, retries = 3, delay = 2000) => {
                     const rollCode = `3${String(roll).padStart(4, "0")}`;
                     const userId = `${department}${session}${rollCode}`;
 
-                    //console.log(`${successCount} - ${lastSuccessRoll} - ${(((successCount)/((lastSuccessRoll) - rollStart)) * 100).toFixed(2)}%`);
+                    console.log(`${successCount} - ${lastSuccessRoll} - ${(((successCount)/((lastSuccessRoll) - rollStart)) * 100).toFixed(2)}%`);
                     console.log(`🔍 Trying: ${userId}`);
                     const page = await browser.newPage();
                     await page.setDefaultNavigationTimeout(20000);
