@@ -63,19 +63,30 @@ Open the script and review the constants at the top:
 | `eee.json`                | Electrical and electronic engineering        |
 | `ell.json`                | English language & literature                |
 | `jmc.json`                | Journalism and mass communication            |
+| `results.json`            | Initial Results after checking all students  |
 | `found_departments.json`  | Found existing departments                   |
 - `npm.json`, `package.json`: Node.js project configuration and dependencies.
 
 ## Getting Started
-1. **Install dependencies** (if any):
-   ```powershell
-   npm install
-   ```
+1. **Install dependencies**:
+
+    Install Puppeteer and dependencies for parallel processing:
+    ```powershell
+    npm install puppeteer
+    npm install p-map
+    ```
+
+    Or, to install all dependencies at once (if listed in `package.json`):
+    ```powershell
+    npm install
+    ```
+
 2. **Run scripts**:
-   You can run any of the JavaScript files using Node.js. For example:
-   ```powershell
-   node checkDept.js
-   ```
+
+    You can run any of the JavaScript files using Node.js. For example:
+    ```powershell
+    node checkDept.js
+    ```
 
 ## Purpose
 Data scraping for analysis and visiulization of students academic performance. 
