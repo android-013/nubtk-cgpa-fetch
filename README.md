@@ -21,7 +21,7 @@ https://nubtkhulna.ac.bd/ter/panel/overallresult
 | `checkPara.js`    | Check multiple users in parallel                                 |
 | `checkUsers.js`   | Check users one at a time                                        |
 
-## CheckUsers Algorithm
+## CheckUsers.js Algorithm
 
 ### Configuration
 
@@ -33,8 +33,6 @@ Open the script and review the constants at the top:
 - **failCheck** — Maximum consecutive login failures before skipping to next session.
 - **Year/term loops** — Adjust the ranges/sets to match the sessions you’re auditing.
 - **Throttle** — The `setTimeout(500)` between attempts; raise this to reduce load.
-
-*Tip: Consider externalizing these to a config file or environment variables for safer changes without code edits.*
 
 ### How It Works (Process)
 
@@ -66,7 +64,6 @@ Open the script and review the constants at the top:
 | `ell.json`                | English language & literature                |
 | `jmc.json`                | Journalism and mass communication            |
 | `found_departments.json`  | Found existing departments                   |
-
 - `npm.json`, `package.json`: Node.js project configuration and dependencies.
 
 ## Getting Started
@@ -81,7 +78,7 @@ Open the script and review the constants at the top:
    ```
 
 ## Purpose
-The scripts and data files are likely used to validate, process, or analyze department-related information. Please refer to the source code for specific logic and usage.
+Data scraping for analysis and visiulization of students academic performance. 
 
 ## Contributing
 Feel free to open issues or submit pull requests for improvements or bug fixes.
