@@ -1,11 +1,38 @@
-# nubtk-cg
+## nubtk-cgpa-fetch
 
-This project appears to be a collection of scripts and JSON files related to department checking and management, possibly for an academic or organizational context.
+This project appears is an automated program to find Northern University of Business and Technology (NUBTK) students information like name and grade point average (CGPA) from the official website by using default password.
+
+## How It Works
+
+1. Program Goes to "https://nubtkhulna.ac.bd/ter"
+
+2. Input A pre programed user name & password and press button to login to students personal page
+https://nubtkhulna.ac.bd/ter/panel/overallresult
+
+3. Navigate to Find Name & CGPA with HTML tag & xPath and fetch data and stores in json file
+https://nubtkhulna.ac.bd/ter/panel/overallresult
 
 ## Project Structure
-- `checkDept.js`, `checkDP.js`, `checkPara.js`, `checkUsers.js`: JavaScript scripts for various checking and validation tasks.
-- `arch.json`, `ce.json`, `eee.json`, `ell.json`, `jmc.json`, `npm.json`, `found_departments.json`: JSON files, likely containing department or user data.
-- `package.json`: Node.js project configuration and dependencies.
+
+| File              | Description                                                      |
+|-------------------|------------------------------------------------------------------|
+| `checkDept.js`    | Find existing department                                         |
+| `checkDP.js`      | Find existing department                                         |
+| `checkPara.js`    | Check multiple users in parallel                                 |
+| `checkUsers.js`   | Check users one at a time                                        |
+
+## Data Obtained
+
+| File                      | Description                                  |
+|---------------------------|----------------------------------------------|
+| `arch.json`               | Architecture students                        |
+| `ce.json`                 | Civil engineering                            |
+| `eee.json`                | Electrical and electronic engineering        |
+| `ell.json`                | English language & literature                |
+| `jmc.json`                | Journalism and mass communication            |
+| `found_departments.json`  | Found existing departments                   |
+
+- `npm.json`, `package.json`: Node.js project configuration and dependencies.
 
 ## Getting Started
 1. **Install dependencies** (if any):
@@ -24,5 +51,3 @@ The scripts and data files are likely used to validate, process, or analyze depa
 ## Contributing
 Feel free to open issues or submit pull requests for improvements or bug fixes.
 
-## License
-Specify your license here.
