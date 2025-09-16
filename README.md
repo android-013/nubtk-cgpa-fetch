@@ -21,6 +21,41 @@ https://nubtkhulna.ac.bd/ter/panel/overallresult
 | `checkPara.js`    | Check multiple users in parallel                                 |
 | `checkUsers.js`   | Check users one at a time                                        |
 
+## CheckUsers Algorithm
+
+### Configuration
+
+Open the script and review the constants at the top:
+
+- **baseUrl** — Root URL of the authorized environment (e.g., your staging clone or local mock).
+- **department** — Department code used in constructing IDs.
+- **rollStart, rollEnd** — Inclusive roll number range to try.
+- **failCheck** — Maximum consecutive login failures before skipping to next session.
+- **Year/term loops** — Adjust the ranges/sets to match the sessions you’re auditing.
+- **Throttle** — The `setTimeout(500)` between attempts; raise this to reduce load.
+
+*Tip: Consider externalizing these to a config file or environment variables for safer changes without code edits.*
+
+### How It Works (Process)
+
+1. Launch headless Chromium.
+2. For each configured session (year × term):
+    - Iterate roll numbers in the specified range.
+    - Construct a candidate user ID (same value used as password in this script).
+    - Open login page, submit credentials, and wait for navigation.
+    - **On success:**
+        - Visit the results page and extract allowed fields (e.g., name, CGPA).
+        - Append a record to memory.
+        - Log out, then continue.
+    - **On failure or error:**
+        - Increment consecutive failure counter.
+        - If it reaches `failCheck`, skip the rest of this session (early exit).
+    - Close the page and wait briefly (throttle).
+3. After all sessions:
+    - Close the browser.
+    - Print a summary table to console.
+    - Write `results.json` with collected records.
+
 ## Data Obtained
 
 | File                      | Description                                  |
