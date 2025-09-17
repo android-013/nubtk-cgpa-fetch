@@ -18,8 +18,9 @@ https://nubtkhulna.ac.bd/ter/panel/overallresult
 |-------------------|------------------------------------------------------------------|
 | `checkDept.js`    | Find existing department                                         |
 | `checkDP.js`      | Find existing department                                         |
-| `checkPara.js`    | Check multiple users in parallel                                 |
-| `checkUsers.js`   | Check users one at a time                                        |
+| `checkPara.js`    | Check multiple in parallel                                       |
+| `checkUsers.js`   | Check users one at a time `main program`                         |
+- `npm.json`, `package.json`: Node.js project configuration and dependencies.
 
 ## CheckUsers.js Algorithm
 
@@ -36,7 +37,9 @@ Open the script and review the constants at the top:
 
 ### How It Works (Process)
 
+---
 1. Launch headless Chromium.
+---
 2. For each configured session (year × term):
     - Iterate roll numbers in the specified range.
     - Construct a candidate user ID (same value used as password in this script).
@@ -49,23 +52,24 @@ Open the script and review the constants at the top:
         - Increment consecutive failure counter.
         - If it reaches `failCheck`, skip the rest of this session (early exit).
     - Close the page and wait briefly (throttle).
+---
 3. After all sessions:
     - Close the browser.
     - Print a summary table to console.
     - Write `results.json` with collected records.
+---
 
 ## Data Obtained
 
 | File                      | Description                                  |
 |---------------------------|----------------------------------------------|
-| `arch.json`               | Architecture students                        |
-| `ce.json`                 | Civil engineering                            |
-| `eee.json`                | Electrical and electronic engineering        |
-| `ell.json`                | English language & literature                |
-| `jmc.json`                | Journalism and mass communication            |
+| `arch.json`               | Architecture Students                        |
+| `ce.json`                 | Civil Engineering                            |
+| `eee.json`                | Electrical and Electronic Engineering        |
+| `ell.json`                | English Language & Literature                |
+| `jmc.json`                | Journalism and Mass Communication            |
 | `results.json`            | Initial Results after checking all students  |
 | `found_departments.json`  | Found existing departments                   |
-- `npm.json`, `package.json`: Node.js project configuration and dependencies.
 
 ## Getting Started
 1. **Install dependencies**:
