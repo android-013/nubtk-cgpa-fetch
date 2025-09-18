@@ -4,7 +4,7 @@ const fs = require("fs");
 const baseUrl = "https://nubtkhulna.ac.bd/ter";
 const department = "CSE"; 
 const rollStart = 1;
-const rollEnd = 2500;
+const rollEnd = 3000;
 const failCheck = 50; // consecutive failures before skipping session
 let successCount = 0;
 
