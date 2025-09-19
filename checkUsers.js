@@ -2,10 +2,10 @@ const puppeteer = require("puppeteer");
 const fs = require("fs");
 
 const baseUrl = "https://nubtkhulna.ac.bd/ter";
-const department = "BBA"; 
+const department = "LLB"; 
 const rollStart = 1;
 const rollEnd = 3000;
-const failCheck = 50; // consecutive failures before skipping session
+const failCheck = 20; // consecutive failures before skipping session
 let successCount = 0;
 
 const retry = async (fn, retries = 3, delay = 2000) => {
