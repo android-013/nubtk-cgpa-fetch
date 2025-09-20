@@ -65,6 +65,7 @@ Open the script and review the constants at the top:
 |---------------------------|----------------------------------------------|
 | `arch.json`               | Architecture Students                        |
 | `ce.json`                 | Civil Engineering                            |
+| `bba.json`                | Business Administration                      |
 | `cse.json`                | Computer Science & Engineering               |
 | `eee.json`                | Electrical and Electronic Engineering        |
 | `ell.json`                | English Language & Literature                |
