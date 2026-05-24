@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>CGPA Bell Curve</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f3f6fb;
+      color: #111827;
+    }
+
+    .container {
+      width: min(1200px, 94%);
+      margin: auto;
+      padding: 35px 0;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .header h1 {
+      margin: 0;
+      font-size: 42px;
+    }
+
+    .header p {
+      color: #6b7280;
+      margin-top: 10px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+      margin-bottom: 24px;
+    }
+
+    .stat-card,
+    .chart-card,
+    .checker-card {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+    }
+
+    .stat-card {
+      padding: 20px;
+    }
+
+    .stat-card span {
+      display: block;
+      color: #6b7280;
+      font-size: 14px;
+      margin-bottom: 8px;
+    }
+
+    .stat-card strong {
+      font-size: 26px;
+    }
+
+    .chart-card {
+      height: 520px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    .checker-card {
+      padding: 24px;
+    }
+
+    .checker-card h2 {
+      margin-top: 0;
+    }
+
+    .input-row {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    input {
+      flex: 1;
+      padding: 14px 16px;
+      border: 1px solid #d1d5db;
+      border-radius: 10px;
+      font-size: 16px;
+    }
+
+    button {
+      padding: 14px 24px;
+      border: none;
+      background: #2563eb;
+      color: white;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    button:hover {
+      background: #1d4ed8;
+    }
+
+    .result {
+      display: none;
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      padding: 18px;
+      border-radius: 12px;
+      line-height: 1.7;
+    }
+
+    .result.show {
+      display: block;
+    }
+
+    .error {
+      color: #dc2626;
+      font-weight: bold;
+    }
+
+    @media (max-width: 900px) {
+      .stats {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .chart-card {
+        height: 450px;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .stats {
+        grid-template-columns: 1fr;
+      }
+
+      .input-row {
+        flex-direction: column;
+      }
+
+      .header h1 {
+        font-size: 32px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>CGPA Bell Curve</h1>
+      <p>Distribution of student CGPA from 2.00 to 4.00</p>
+    </div>
+
+    <div class="stats">
+      <div class="stat-card">
+        <span>Total Students</span>
+        <strong id="totalStudents">-</strong>
+      </div>
+
+      <div class="stat-card">
+        <span>Mean CGPA</span>
+        <strong id="meanCgpa">-</strong>
+      </div>
+
+      <div class="stat-card">
+        <span>Standard Deviation</span>
+        <strong id="stdDev">-</strong>
+      </div>
+
+      <div class="stat-card">
+        <span>CGPA Range</span>
+        <strong id="cgpaRange">-</strong>
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <canvas id="bellCurveChart"></canvas>
+    </div>
+
+    <div class="checker-card">
+      <h2>Check Your CGPA Position</h2>
+
+      <div class="input-row">
+        <input
+          type="number"
+          id="cgpaInput"
+          min="2"
+          max="4"
+          step="0.01"
+          placeholder="Enter CGPA, example: 3.25"
+        />
+
+        <button id="checkBtn">Check</button>
+      </div>
+
+      <div id="resultBox" class="result"></div>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE_URL = "";
+
+    const totalStudentsEl = document.getElementById("totalStudents");
+    const meanCgpaEl = document.getElementById("meanCgpa");
+    const stdDevEl = document.getElementById("stdDev");
+    const cgpaRangeEl = document.getElementById("cgpaRange");
+
+    const cgpaInput = document.getElementById("cgpaInput");
+    const checkBtn = document.getElementById("checkBtn");
+    const resultBox = document.getElementById("resultBox");
+
+    let chart = null;
+
+    async function loadBellCurve() {
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/bell-curve`);
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || "Failed to load data.");
+        }
+
+        showStats(data);
+        drawChart(data.points);
+      } catch (error) {
+        alert(error.message);
+      }
+    }
+
+    function showStats(data) {
+      totalStudentsEl.textContent = data.totalStudents;
+      meanCgpaEl.textContent = Number(data.mean).toFixed(2);
+      stdDevEl.textContent = Number(data.standardDeviation).toFixed(2);
+      cgpaRangeEl.textContent = `${Number(data.min).toFixed(2)} - ${Number(data.max).toFixed(2)}`;
+    }
+
+    function drawChart(points) {
+      const ctx = document.getElementById("bellCurveChart");
+
+      const labels = points.map(point => point.cgpa);
+      const counts = points.map(point => point.count);
+      const bellValues = points.map(point => point.bellValueScaled);
+
+      if (chart) {
+        chart.destroy();
+      }
+
+      chart = new Chart(ctx, {
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              type: "bar",
+              label: "Actual Student Count",
+              data: counts,
+              backgroundColor: "rgba(37, 99, 235, 0.25)",
+              borderColor: "rgba(37, 99, 235, 0.8)",
+              borderWidth: 1,
+              barPercentage: 1,
+              categoryPercentage: 1
+            },
+            {
+              type: "line",
+              label: "Bell Curve",
+              data: bellValues,
+              borderColor: "rgba(220, 38, 38, 1)",
+              backgroundColor: "rgba(220, 38, 38, 0.1)",
+              borderWidth: 3,
+              pointRadius: 0,
+              tension: 0.35,
+              fill: false
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: {
+            mode: "index",
+            intersect: false
+          },
+          plugins: {
+            legend: {
+              position: "top"
+            },
+            tooltip: {
+              callbacks: {
+                title: function(items) {
+                  return `CGPA: ${items[0].label}`;
+                }
+              }
+            }
+          },
+          scales: {
+            x: {
+              title: {
+                display: true,
+                text: "CGPA"
+              },
+              ticks: {
+                maxTicksLimit: 12
+              }
+            },
+            y: {
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: "Number of Students"
+              }
+            }
+          }
+        }
+      });
+    }
+
+    async function checkCgpa() {
+      const cgpa = Number.parseFloat(cgpaInput.value);
+
+      resultBox.classList.add("show");
+
+      if (Number.isNaN(cgpa) || cgpa < 2 || cgpa > 4) {
+        resultBox.innerHTML = `
+          <p class="error">Please enter a valid CGPA between 2.00 and 4.00.</p>
+        `;
+        return;
+      }
+
+      try {
+        const response = await fetch(
+          `${API_BASE_URL}/api/percentile?cgpa=${encodeURIComponent(cgpa)}`
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || "Failed to calculate percentage.");
+        }
+
+        resultBox.innerHTML = `
+          <p>Your CGPA: <strong>${data.cgpa.toFixed(2)}</strong></p>
+
+          <p>
+            You are above approximately 
+            <strong>${data.bottomPercentage}%</strong> of students.
+          </p>
+
+          <p>
+            You are in the top approximately 
+            <strong>${data.topPercentage}%</strong> of students.
+          </p>
+
+          <p>
+            Students below you: <strong>${data.studentsBelow}</strong><br>
+            Students equal to you: <strong>${data.studentsEqual}</strong><br>
+            Students equal or below you: <strong>${data.studentsBelowOrEqual}</strong><br>
+            Students above you: <strong>${data.studentsAbove}</strong>
+          </p>
+
+          <hr>
+
+          <p>
+            Bell curve estimate:<br>
+            Bottom percentage: <strong>${data.normalBottomPercentage}%</strong><br>
+            Top percentage: <strong>${data.normalTopPercentage}%</strong>
+          </p>
+        `;
+      } catch (error) {
+        resultBox.innerHTML = `<p class="error">${error.message}</p>`;
+      }
+    }
+
+    checkBtn.addEventListener("click", checkCgpa);
+
+    cgpaInput.addEventListener("keydown", function(event) {
+      if (event.key === "Enter") {
+        checkCgpa();
+      }
+    });
+
+    loadBellCurve();
+  </script>
+</body>
+</html>

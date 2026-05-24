@@ -11,6 +11,7 @@
   "description": "",
   "dependencies": {
     "cors": "^2.8.6",
+    "express": "^5.2.1",
     "p-limit": "^6.2.0",
     "puppeteer": "^24.10.1"
   }
