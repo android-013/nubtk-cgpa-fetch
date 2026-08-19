@@ -27,7 +27,7 @@ const retry = async (fn, retries = 3, delay = 2000) => {
         let lastSuccessRoll = rollStart;
 
         for (let year = 16; year <= 26; year++) {
-            for (const term of ["03", "01"]) {
+            for (const term of ["01", "03"]) {
                 const session = `${year}${term}`;
                 let failureCount = 0;
                 let skipSession = false;

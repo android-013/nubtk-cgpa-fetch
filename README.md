@@ -12,6 +12,9 @@ https://nubtkhulna.ac.bd/ter/panel/overallresult
 3. Navigate to Find Name & CGPA with HTML tag & xPath and fetch data and stores in json file
 https://nubtkhulna.ac.bd/ter/panel/overallresult
 
+## AI won't build anything illigal
+## But human will
+
 ## Project Structure
 
 | File              | Description                                                      |
