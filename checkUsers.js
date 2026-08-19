@@ -6,7 +6,7 @@ const department = "CSE";
 const rollStart = 1;
 const rollEnd = 3000;
 const failCheck = 40; // consecutive failures before skipping session
-const partition = 2; // 2 = science, 3 = arts, 4 = commerce
+const partition = 2; // 1 = commerce, 2 = science, 3 = arts
 
 let successCount = 0;
 
@@ -38,7 +38,6 @@ const retry = async (fn, retries = 3, delay = 2000) => {
 
                     const userId = `${department}${session}${partition}${String(roll).padStart(4, "0")}`;
 
-                    console.log(`${successCount} - ${lastSuccessRoll} - ${(((successCount)/((lastSuccessRoll) - rollStart)) * 100).toFixed(2)}%`);
                     console.log(`🔍 Trying: ${userId}`);
                     const page = await browser.newPage();
                     await page.setDefaultNavigationTimeout(20000);
@@ -130,10 +129,6 @@ const retry = async (fn, retries = 3, delay = 2000) => {
 
         console.log("\n📋 Final Report:");
         console.table(unchanged);
-
-        console.log(`\nTotal successful logins: ${successCount-1}`);
-        console.log(`\nLast successful roll: ${lastSuccessRoll-1}`);
-        console.log(`\npercentage of success: ${(((successCount-1)/((lastSuccessRoll-1) - rollStart)) * 100).toFixed(2)}%`);
 
         fs.writeFileSync("results.json", JSON.stringify(unchanged, null, 2));
     })();

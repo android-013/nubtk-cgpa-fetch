@@ -71,7 +71,6 @@ Open the script and review the constants at the top:
 | `ell.json`                | English Language & Literature                |
 | `jmc.json`                | Journalism and Mass Communication            |
 | `results.json`            | Initial Results after checking all students  |
-| `found_departments.json`  | Found existing departments                   |
 
 ## Getting Started
 1. **Install dependencies**:
