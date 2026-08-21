@@ -59,6 +59,8 @@ const retry = async (fn, retries = 3, delay = 2000) => {
                             lastSuccessRoll = roll + 1;
                             successCount++;
 
+                            console.log(`📊 Success rate: ${((successCount / (roll - rollStart + 1)) * 100).toFixed(2)}%`);
+
                             await retry(() => page.goto(`${baseUrl}/panel/overallresult`, {
                                 waitUntil: "domcontentloaded"
                             }));
