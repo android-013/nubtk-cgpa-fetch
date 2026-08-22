@@ -5,7 +5,7 @@ const baseUrl = "https://nubtkhulna.ac.bd/ter";
 const department = "ARCH"; 
 const rollStart = 1;
 const rollEnd = 3000;
-const failCheck = 100; // consecutive failures before skipping session
+const failCheck = 40; // consecutive failures before skipping session
 const partition = 2; // 1 = commerce, 2 = science, 3 = arts
 
 let successCount = 0;
@@ -26,7 +26,7 @@ const retry = async (fn, retries = 3, delay = 2000) => {
 
         let lastSuccessRoll = rollStart;
 
-        for (let year = 16; year <= 26; year++) {
+        for (let year = 17; year <= 26; year++) {
             for (const term of ["01", "03"]) {
                 const session = `${year}${term}`;
                 let failureCount = 0;
