@@ -2,7 +2,7 @@ const puppeteer = require("puppeteer");
 const fs = require("fs");
 
 const baseUrl = "https://nubtkhulna.ac.bd/ter";
-const department = "ARCH"; 
+const department = "EEE"; 
 const rollStart = 1;
 const rollEnd = 3000;
 const failCheck = 40; // consecutive failures before skipping session
