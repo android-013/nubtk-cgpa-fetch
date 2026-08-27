@@ -4,50 +4,44 @@ const fs = require("fs");
 const path = require("path");
 
 const app = express();
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 
 app.use(cors());
 app.use(express.json());
 
-// Serve frontend
-app.use(express.static(path.join(__dirname, "bellFrontend")));
+// Serve index.html and static files from the root directory
+app.use(express.static(__dirname));
 
-function parseCgpa(value) {
-  const cgpa = Number.parseFloat(value);
+// Explicit route to serve index.html when opening http://localhost:5000/
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "bellFrontend/index.html"));
+});
 
-  if (Number.isNaN(cgpa)) return null;
-  if (cgpa < 2.0 || cgpa > 4.0) return null;
-
-  return cgpa;
-}
-
+// Helper function to extract numerical CGPA values from any JSON structure
 function extractStudents(data) {
-  if (Array.isArray(data)) {
-    return data.flatMap(extractStudents);
-  }
+  let cgpas = [];
 
-  if (data && typeof data === "object") {
-    if ("cgpa" in data) {
-      const cgpa = parseCgpa(data.cgpa);
-
-      if (cgpa !== null) {
-        return [
-          {
-            id: data.id || "",
-            name: data.name || "",
-            cgpa
-          }
-        ];
+  if (typeof data === "number") {
+    if (data >= 0 && data <= 4.0) cgpas.push(data);
+  } else if (Array.isArray(data)) {
+    for (const item of data) {
+      cgpas.push(...extractStudents(item));
+    }
+  } else if (typeof data === "object" && data !== null) {
+    for (const key in data) {
+      if (["cgpa", "gpa", "result", "cg"].includes(key.toLowerCase())) {
+        const val = Number.parseFloat(data[key]);
+        if (!Number.isNaN(val)) cgpas.push(val);
+      } else {
+        cgpas.push(...extractStudents(data[key]));
       }
     }
-
-    return Object.values(data).flatMap(extractStudents);
   }
 
-  return [];
+  return cgpas;
 }
 
-function loadStudents() {
+function loadStudentData() {
   const files = [
     "cse25.json",
     "eee25.json",
@@ -56,7 +50,7 @@ function loadStudents() {
     "bba25.json",
     "ell25.json",
     "jmc25.json"
-    ];
+  ];
 
   let students = [];
 
@@ -76,189 +70,160 @@ function loadStudents() {
   return students;
 }
 
-function mean(values) {
-  return values.reduce((sum, value) => sum + value, 0) / values.length;
+const studentData = loadStudentData();
+
+// ------------------------------------------------------------------
+// Helper Functions
+// ------------------------------------------------------------------
+function calculateMedian(arr) {
+  if (arr.length === 0) return 0;
+  const sorted = [...arr].sort((a, b) => a - b);
+  const mid = Math.floor(sorted.length / 2);
+  return sorted.length % 2 !== 0
+    ? sorted[mid]
+    : (sorted[mid - 1] + sorted[mid]) / 2;
 }
 
-function standardDeviation(values, avg) {
-  const variance =
-    values.reduce((sum, value) => sum + Math.pow(value - avg, 2), 0) /
-    values.length;
-
-  return Math.sqrt(variance);
+function calculateNormalCDF(x, mean, stdDev) {
+  if (stdDev === 0) return x >= mean ? 1 : 0;
+  const z = (x - mean) / stdDev;
+  const t = 1 / (1 + 0.2316419 * Math.abs(z));
+  const d = 0.3989423 * Math.exp((-z * z) / 2);
+  let p =
+    d *
+    t *
+    (0.3193815 +
+      t * (-0.3565638 + t * (1.781478 + t * (-1.821256 + t * 1.330274))));
+  if (z > 0) p = 1 - p;
+  return p;
 }
 
-function normalPdf(x, avg, sd) {
-  if (sd === 0) return 0;
+// ------------------------------------------------------------------
+// API Endpoints
+// ------------------------------------------------------------------
 
-  return (
-    (1 / (sd * Math.sqrt(2 * Math.PI))) *
-    Math.exp(-0.5 * Math.pow((x - avg) / sd, 2))
-  );
-}
-
-function erf(x) {
-  const sign = x >= 0 ? 1 : -1;
-  x = Math.abs(x);
-
-  const a1 = 0.254829592;
-  const a2 = -0.284496736;
-  const a3 = 1.421413741;
-  const a4 = -1.453152027;
-  const a5 = 1.061405429;
-  const p = 0.3275911;
-
-  const t = 1 / (1 + p * x);
-
-  const y =
-    1 -
-    (((((a5 * t + a4) * t + a3) * t + a2) * t + a1) *
-      t *
-      Math.exp(-x * x));
-
-  return sign * y;
-}
-
-function normalCdf(x, avg, sd) {
-  if (sd === 0) {
-    return x < avg ? 0 : 1;
-  }
-
-  return 0.5 * (1 + erf((x - avg) / (sd * Math.sqrt(2))));
-}
-
-function buildBellCurve(students) {
-  const cgpas = students.map((student) => student.cgpa);
-
-  if (cgpas.length === 0) {
-    return {
-      totalStudents: 0,
-      mean: 0,
-      standardDeviation: 0,
-      min: 0,
-      max: 0,
-      points: []
-    };
-  }
-
-  const avg = mean(cgpas);
-  const sd = standardDeviation(cgpas, avg);
-
-  const countMap = {};
-
-  for (let i = 200; i <= 400; i++) {
-    const cgpa = (i / 100).toFixed(2);
-    countMap[cgpa] = 0;
-  }
-
-  for (const cgpa of cgpas) {
-    const roundedCgpa = Number(cgpa).toFixed(2);
-    countMap[roundedCgpa] = (countMap[roundedCgpa] || 0) + 1;
-  }
-
-  let maxPdf = 0;
-
-  const rawPoints = [];
-
-  for (let i = 200; i <= 400; i++) {
-    const x = i / 100;
-    const key = x.toFixed(2);
-    const pdf = normalPdf(x, avg, sd);
-
-    if (pdf > maxPdf) maxPdf = pdf;
-
-    rawPoints.push({
-      cgpa: key,
-      count: countMap[key] || 0,
-      bellValue: pdf
-    });
-  }
-
-  const maxCount = Math.max(...rawPoints.map((point) => point.count), 1);
-
-  const points = rawPoints.map((point) => ({
-    cgpa: point.cgpa,
-    count: point.count,
-    bellValue: point.bellValue,
-    bellValueScaled:
-      maxPdf === 0
-        ? 0
-        : Number(((point.bellValue / maxPdf) * maxCount).toFixed(4))
-  }));
-
-  return {
-    totalStudents: students.length,
-    mean: Number(avg.toFixed(4)),
-    standardDeviation: Number(sd.toFixed(4)),
-    min: Number(Math.min(...cgpas).toFixed(4)),
-    max: Number(Math.max(...cgpas).toFixed(4)),
-    points
-  };
-}
-
+// GET /api/bell-curve
 app.get("/api/bell-curve", (req, res) => {
-  const students = loadStudents();
-  const result = buildBellCurve(students);
+  try {
+    const minLimit = Number.parseFloat(req.query.minCgpa) || 2.0;
+    const maxLimit = Number.parseFloat(req.query.maxCgpa) || 4.0;
 
-  res.json(result);
+    const filteredData = studentData.filter(
+      (val) => val >= minLimit && val <= maxLimit
+    );
+
+    if (filteredData.length === 0) {
+      return res
+        .status(400)
+        .json({ error: "No student data found in the specified range." });
+    }
+
+    const totalStudents = filteredData.length;
+    const sum = filteredData.reduce((acc, val) => acc + val, 0);
+    const mean = sum / totalStudents;
+    const median = calculateMedian(filteredData);
+
+    const variance =
+      filteredData.reduce((acc, val) => acc + Math.pow(val - mean, 2), 0) /
+      totalStudents;
+    const standardDeviation = Math.sqrt(variance);
+
+    const countsMap = {};
+    filteredData.forEach((cgpa) => {
+      const key = cgpa.toFixed(2);
+      countsMap[key] = (countsMap[key] || 0) + 1;
+    });
+
+    const step = 0.02;
+    const points = [];
+
+    for (let x = minLimit; x <= maxLimit; x += step) {
+      const key = x.toFixed(2);
+      const count = countsMap[key] || 0;
+
+      const bellValue =
+        (1 / (standardDeviation * Math.sqrt(2 * Math.PI))) *
+        Math.exp(-0.5 * Math.pow((x - mean) / standardDeviation, 2));
+
+      points.push({
+        cgpa: key,
+        count: count,
+        bellValueScaled: Number.parseFloat(
+          (bellValue * totalStudents * 0.05).toFixed(2)
+        )
+      });
+    }
+
+    res.json({
+      totalStudents,
+      mean: Number.parseFloat(mean.toFixed(2)),
+      median: Number.parseFloat(median.toFixed(2)),
+      standardDeviation: Number.parseFloat(standardDeviation.toFixed(2)),
+      min: Math.min(...filteredData),
+      max: Math.max(...filteredData),
+      points
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
+// GET /api/percentile
 app.get("/api/percentile", (req, res) => {
-  const inputCgpa = parseCgpa(req.query.cgpa);
+  try {
+    const cgpa = Number.parseFloat(req.query.cgpa);
+    const minLimit = Number.parseFloat(req.query.minCgpa) || 2.0;
+    const maxLimit = Number.parseFloat(req.query.maxCgpa) || 4.0;
 
-  if (inputCgpa === null) {
-    return res.status(400).json({
-      error: "Invalid CGPA. Please enter a value between 2.00 and 4.00."
+    if (Number.isNaN(cgpa) || cgpa < minLimit || cgpa > maxLimit) {
+      return res.status(400).json({
+        error: `Please enter a valid CGPA between ${minLimit.toFixed(2)} and ${maxLimit.toFixed(2)}.`
+      });
+    }
+
+    const filteredData = studentData.filter(
+      (val) => val >= minLimit && val <= maxLimit
+    );
+
+    const total = filteredData.length;
+    if (total === 0) {
+      return res.status(400).json({ error: "No data available in this range." });
+    }
+
+    const studentsBelow = filteredData.filter((val) => val < cgpa).length;
+    const studentsEqual = filteredData.filter((val) => val === cgpa).length;
+    const studentsAbove = filteredData.filter((val) => val > cgpa).length;
+    const studentsBelowOrEqual = studentsBelow + studentsEqual;
+
+    const bottomPercentage = ((studentsBelow / total) * 100).toFixed(2);
+    const topPercentage = ((studentsAbove / total) * 100).toFixed(2);
+
+    const sum = filteredData.reduce((acc, val) => acc + val, 0);
+    const mean = sum / total;
+    const variance =
+      filteredData.reduce((acc, val) => acc + Math.pow(val - mean, 2), 0) / total;
+    const stdDev = Math.sqrt(variance);
+
+    const cdf = calculateNormalCDF(cgpa, mean, stdDev);
+    const normalBottomPercentage = (cdf * 100).toFixed(2);
+    const normalTopPercentage = ((1 - cdf) * 100).toFixed(2);
+
+    res.json({
+      cgpa,
+      bottomPercentage: Number.parseFloat(bottomPercentage),
+      topPercentage: Number.parseFloat(topPercentage),
+      studentsBelow,
+      studentsEqual,
+      studentsBelowOrEqual,
+      studentsAbove,
+      normalBottomPercentage: Number.parseFloat(normalBottomPercentage),
+      normalTopPercentage: Number.parseFloat(normalTopPercentage)
     });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
-
-  const students = loadStudents();
-  const cgpas = students.map((student) => student.cgpa);
-
-  if (cgpas.length === 0) {
-    return res.status(404).json({
-      error: "No valid CGPA data found."
-    });
-  }
-
-  const avg = mean(cgpas);
-  const sd = standardDeviation(cgpas, avg);
-
-  const studentsBelow = cgpas.filter((cgpa) => cgpa < inputCgpa).length;
-  const studentsEqual = cgpas.filter((cgpa) => cgpa === inputCgpa).length;
-  const studentsBelowOrEqual = cgpas.filter((cgpa) => cgpa <= inputCgpa).length;
-  const studentsAbove = cgpas.filter((cgpa) => cgpa > inputCgpa).length;
-
-  const bottomPercentage = (studentsBelowOrEqual / cgpas.length) * 100;
-  const topPercentage = (studentsAbove / cgpas.length) * 100;
-
-  const normalBottomPercentage = normalCdf(inputCgpa, avg, sd) * 100;
-  const normalTopPercentage = 100 - normalBottomPercentage;
-
-  res.json({
-    cgpa: Number(inputCgpa.toFixed(2)),
-    totalStudents: cgpas.length,
-
-    studentsBelow,
-    studentsEqual,
-    studentsBelowOrEqual,
-    studentsAbove,
-
-    bottomPercentage: Number(bottomPercentage.toFixed(2)),
-    topPercentage: Number(topPercentage.toFixed(2)),
-
-    normalBottomPercentage: Number(normalBottomPercentage.toFixed(2)),
-    normalTopPercentage: Number(normalTopPercentage.toFixed(2)),
-
-    mean: Number(avg.toFixed(4)),
-    standardDeviation: Number(sd.toFixed(4))
-  });
-});
-
-app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "bellFrontend", "index.html"));
 });
 
 app.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}`);
+  console.log(`Server running on http://localhost:${PORT}`);
 });
