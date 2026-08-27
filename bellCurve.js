@@ -49,13 +49,13 @@ function extractStudents(data) {
 
 function loadStudents() {
   const files = [
-    "cse.json",
-    "eee.json",
-    "arch.json",
-    "ce.json",
-    "bba.json",
-    "ell.json",
-    "jmc.json"
+    "cse25.json",
+    "eee25.json",
+    "arch25.json",
+    "ce25.json",
+    "bba25.json",
+    "ell25.json",
+    "jmc25.json"
     ];
 
   let students = [];
