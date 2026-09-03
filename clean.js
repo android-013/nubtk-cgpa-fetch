@@ -25,9 +25,6 @@ const invalidValues = [
 
 let allStudents = [];
 
-
-// Read all input files
-
 files.forEach(file => {
 
     try {
@@ -60,9 +57,6 @@ console.log(
 );
 
 
-
-// Cleaning function
-
 function cleanData(records) {
 
 
@@ -71,15 +65,9 @@ function cleanData(records) {
     let validRecords = records.filter(student => {
 
 
-        if (
-            !student.id ||
-            !student.name ||
-            !student.cgpa
-        ) {
+        if (!student.id ||!student.name ||!student.cgpa) {
             return false;
         }
-
-
 
         const id = String(student.id)
                     .trim()
@@ -96,33 +84,16 @@ function cleanData(records) {
                          .toLowerCase();
 
 
-
-        // Remove unknown / n/a values
-
-        if (
-            invalidValues.includes(id) ||
-            invalidValues.includes(name) ||
-            invalidValues.includes(cgpaText)
-        ) {
+        if (invalidValues.includes(id) ||invalidValues.includes(name) ||invalidValues.includes(cgpaText)) {
             return false;
         }
-
-
-
-        // Validate CGPA
 
         const cgpa = Number(cgpaText);
 
-
         if (
-            isNaN(cgpa) ||
-            cgpa <= 0 ||
-            cgpa > 4
-        ) {
+            isNaN(cgpa) ||cgpa <= 0 ||cgpa > 4) {
             return false;
         }
-
-
         return true;
 
     });
@@ -153,24 +124,17 @@ function cleanData(records) {
 
     });
 
-
-
     return validRecords;
 
 }
-
-
 
 // Clean data
 
 const cleanedData = cleanData(allStudents);
 
-
-
 console.log(
     `Total records after cleaning: ${cleanedData.length}`
 );
-
 
 
 // Save output
