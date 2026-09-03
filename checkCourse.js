@@ -3,7 +3,7 @@ const fs = require("fs");
 
 function appendToJSON(newData) {
 
-    const file = "data.js";
+    const file = "data.json";
 
     let oldData = [];
 
@@ -47,7 +47,7 @@ function appendToJSON(newData) {
 
 const baseUrl = "https://nubtkhulna.ac.bd/ter";
 const department = "CSE"; 
-const rollStart = 1;
+const rollStart = 1994;
 const rollEnd = 3000;
 const failCheck = 50; // consecutive failures before skipping session
 const partition = 2; // 1 = commerce, 2 = science, 3 = arts
@@ -70,7 +70,7 @@ const retry = async (fn, retries = 3, delay = 2000) => {
 
         let lastSuccessRoll = rollStart;
 
-        for (let year =16; year <= 25; year++) {
+        for (let year = 25; year <= 25; year++) {
             for (const term of ["01", "03"]) {
                 const session = `${year}${term}`;
                 let failureCount = 0;
