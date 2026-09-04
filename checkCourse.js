@@ -3,7 +3,7 @@ const fs = require("fs");
 
 function appendToJSON(newData) {
 
-    const file = "bbaC.json";
+    const file = "archC.json";
 
     let oldData = [];
 
@@ -46,11 +46,11 @@ function appendToJSON(newData) {
 }
 
 const baseUrl = "https://nubtkhulna.ac.bd/ter";
-const department = "BBA"; 
+const department = "ARCH"; 
 const rollStart = 1;
 const rollEnd = 3000;
 const failCheck = 50; // consecutive failures before skipping session
-const partition = 1; // 1 = commerce, 2 = science, 3 = arts
+const partition = 2; // 1 = commerce, 2 = science, 3 = arts
 
 let successCount = 0;
 
