@@ -14,7 +14,7 @@ let successCount = 0;
 
 function appendToJSON(newData) {
 
-    const file = `${department}.json`;
+    const file = `${department}C.json`;
 
     let oldData = [];
 
