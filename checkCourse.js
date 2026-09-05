@@ -2,7 +2,7 @@ const puppeteer = require("puppeteer");
 const fs = require("fs");
 
 const baseUrl = "https://nubtkhulna.ac.bd/ter";
-const department = "ARCH"; 
+const department = "EEE"; 
 const rollStart = 1;
 const rollEnd = 3000;
 const failCheck = 50; // consecutive failures before skipping session
@@ -18,42 +18,32 @@ function appendToJSON(newData) {
 
     let oldData = [];
 
-
     if (fs.existsSync(file)) {
 
         const content = fs.readFileSync(file, "utf8").trim();
 
         if (content.length > 0) {
-
             try {
                 oldData = JSON.parse(content);
-
             } catch (err) {
-
                 console.log("Invalid JSON file. Starting fresh...");
                 oldData = [];
-
             }
         }
     }
 
-
     oldData.push(newData);
-
 
     const formatted = JSON.stringify(oldData, null, 2)
         .replace(
             /{\n\s+"sl": ".*?"[\s\S]*?\n\s+}/g,
             match => match.replace(/\n\s+/g, " ")
         );
-
-
     fs.writeFileSync(
         file,
         formatted,
         "utf8"
     );
-
 }
 
 
