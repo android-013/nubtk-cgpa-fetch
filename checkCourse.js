@@ -3,12 +3,12 @@ const fs = require("fs");
 
 const baseUrl = "https://nubtkhulna.ac.bd/ter";
 const department = "EEE"; 
-const rollStart = 1;
+const rollStart = 202;
 const rollEnd = 3000;
 const failCheck = 50; // consecutive failures before skipping session
 const partition = 2; // 1 = commerce, 2 = science, 3 = arts
-const sessionStart = 16;
-const sessionEnd = 25; 
+const sessionStart = 23;
+const sessionEnd = 25;
 
 let successCount = 0;
 
