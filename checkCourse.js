@@ -2,12 +2,12 @@ const puppeteer = require("puppeteer");
 const fs = require("fs");
 
 const baseUrl = "https://nubtkhulna.ac.bd/ter";
-const department = "CE"; 
-const rollStart = 1;
+const department = "ELL"; 
+const rollStart = 1089;
 const rollEnd = 3000;
-const failCheck = 50; // consecutive failures before skipping session
-const partition = 2; // 1 = commerce, 2 = science, 3 = arts
-const sessionStart = 16;
+const failCheck = 100; // consecutive failures before skipping session
+const partition = 3; // 1 = commerce, 2 = science, 3 = arts
+const sessionStart = 24;
 const sessionEnd = 25;
 
 let successCount = 0;
@@ -192,10 +192,9 @@ const retry = async (fn, retries = 3, delay = 2000) => {
 
                         });
 
-
-                        await appendToJSON(data);
-
+                            await appendToJSON(data);
                             await retry(() => page.goto(`${baseUrl}/login/signout`, { waitUntil: "domcontentloaded" }));
+                        
                         } else {
                             failureCount++;
                             console.log(`❌ Login failed: ${userId}`);
@@ -206,7 +205,7 @@ const retry = async (fn, retries = 3, delay = 2000) => {
                             skipSession = true;
                             break;
                         }
-                        
+
                     } catch (err) {
                         failureCount++;
                         console.error(`⏱️ Timeout or error with ${userId}: ${err.message}`);
