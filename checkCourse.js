@@ -2,12 +2,12 @@ const puppeteer = require("puppeteer");
 const fs = require("fs");
 
 const baseUrl = "https://nubtkhulna.ac.bd/ter";
-const department = "ELL"; 
-const rollStart = 1089;
+const department = "JMC"; 
+const rollStart = 44;
 const rollEnd = 3000;
-const failCheck = 100; // consecutive failures before skipping session
+const failCheck = 50; // consecutive failures before skipping session
 const partition = 3; // 1 = commerce, 2 = science, 3 = arts
-const sessionStart = 24;
+const sessionStart = 21;
 const sessionEnd = 25;
 
 let successCount = 0;
