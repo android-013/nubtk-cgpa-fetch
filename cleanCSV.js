@@ -314,3 +314,9 @@ csvWriter.writeRecords(csvRows)
     );
 
 });
+
+//Initial: 4555
+//After CGPA: 4064
+//After invalid data: 3293
+//After duplicate removal: 3293
+//Maximum courses: 78
