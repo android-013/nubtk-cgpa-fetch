@@ -1,0 +1,653 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Academic DNA Explorer</title>
+  <style>
+    :root {
+      --bg: #f4f7fb;
+      --panel: #ffffff;
+      --ink: #14213d;
+      --muted: #667085;
+      --line: #e4e9f2;
+      --accent: #4f46e5;
+      --accent-soft: #eef0ff;
+      --shadow: 0 12px 32px rgba(21, 35, 64, .07);
+      --radius: 18px;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font: 14px/1.45 Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    button, input, select { font: inherit; }
+    button { cursor: pointer; }
+    .shell { max-width: 1500px; margin: 0 auto; padding: 28px; }
+    .hero {
+      display: flex;
+      justify-content: space-between;
+      gap: 24px;
+      align-items: flex-start;
+      margin-bottom: 22px;
+    }
+    .eyebrow { color: var(--accent); font-size: 11px; font-weight: 800; letter-spacing: .14em; }
+    h1, h2, p { margin: 0; }
+    h1 { margin-top: 7px; font-size: clamp(27px, 4vw, 44px); letter-spacing: -.04em; }
+    .subtitle { margin-top: 8px; color: var(--muted); max-width: 680px; }
+    .status { background: var(--panel); border: 1px solid var(--line); border-radius: 999px; padding: 9px 14px; color: var(--muted); white-space: nowrap; box-shadow: var(--shadow); }
+
+    .panel, .stat-card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); }
+    .controls { display: grid; grid-template-columns: minmax(230px, 2fr) repeat(4, minmax(130px, 1fr)) auto; gap: 10px; padding: 14px; margin-bottom: 18px; }
+    .field { display: flex; flex-direction: column; gap: 5px; }
+    .field span { color: var(--muted); font-size: 11px; font-weight: 700; }
+    input, select { width: 100%; min-height: 39px; padding: 8px 10px; color: var(--ink); border: 1px solid var(--line); border-radius: 10px; background: #fff; outline: none; }
+    input:focus, select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+    .reset { align-self: end; min-height: 39px; padding: 0 15px; border: 0; border-radius: 10px; color: #fff; background: var(--ink); font-weight: 700; }
+    .reset:hover { background: #25365b; }
+
+    .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 18px; }
+    .stat-card { padding: 18px; }
+    .stat-label { color: var(--muted); font-size: 12px; font-weight: 700; }
+    .stat-value { margin-top: 4px; font-size: 26px; font-weight: 800; letter-spacing: -.03em; }
+    .stat-note { margin-top: 5px; color: var(--muted); font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    .charts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 18px; }
+    .chart-panel { min-width: 0; padding: 17px; }
+    .panel-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
+    h2 { font-size: 16px; letter-spacing: -.02em; }
+    .panel-note { color: var(--muted); font-size: 12px; }
+    canvas { display: block; width: 100%; height: 245px; }
+    .legend { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px 10px; margin-top: 8px; }
+    .legend-item { display: flex; align-items: center; gap: 7px; min-width: 0; color: var(--muted); font-size: 11px; }
+    .legend-swatch { width: 9px; height: 9px; flex: 0 0 auto; border-radius: 3px; }
+    .legend-item span:last-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+    .table-panel { overflow: hidden; }
+    .table-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 17px; border-bottom: 1px solid var(--line); }
+    .table-toolbar-left, .table-toolbar-right { display: flex; align-items: center; gap: 10px; }
+    .table-toolbar-right { color: var(--muted); font-size: 12px; }
+    .compact-select { min-height: 34px; width: auto; }
+    .table-scroll { max-height: 620px; overflow: auto; }
+    table { width: 100%; min-width: 900px; border-collapse: separate; border-spacing: 0; }
+    th, td { padding: 11px 13px; border-bottom: 1px solid var(--line); text-align: left; white-space: nowrap; }
+    th { position: sticky; top: 0; z-index: 2; background: #fbfcfe; color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: .06em; }
+    th button { padding: 0; border: 0; background: none; color: inherit; font-weight: 800; text-transform: inherit; letter-spacing: inherit; }
+    th button:hover { color: var(--accent); }
+    tbody tr { transition: background .15s ease; }
+    tbody tr:hover { background: #f8f9ff; }
+    tbody tr { cursor: pointer; }
+    td { color: #344054; }
+    .group-badge { display: inline-flex; align-items: center; max-width: 250px; padding: 5px 9px; border-radius: 999px; color: #25304c; background: var(--accent-soft); font-size: 12px; font-weight: 700; overflow: hidden; text-overflow: ellipsis; }
+    .num { font-variant-numeric: tabular-nums; }
+    .pagination { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 13px 17px; color: var(--muted); font-size: 12px; }
+    .pagination button { min-width: 82px; padding: 8px 11px; border: 1px solid var(--line); border-radius: 9px; color: var(--ink); background: #fff; font-weight: 700; }
+    .pagination button:disabled { cursor: not-allowed; opacity: .45; }
+
+    .modal { display: none; position: fixed; inset: 0; z-index: 10; align-items: center; justify-content: center; padding: 20px; background: rgba(15, 23, 42, .46); }
+    .modal.open { display: flex; }
+    .modal-card { width: min(760px, 100%); max-height: 90vh; overflow: auto; padding: 22px; border-radius: 20px; background: #fff; box-shadow: 0 24px 80px rgba(15, 23, 42, .24); }
+    .modal-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; }
+    .modal-close { width: 32px; height: 32px; border: 0; border-radius: 50%; color: var(--muted); background: #f1f3f8; font-size: 20px; }
+    .modal-meta { margin-top: 5px; color: var(--muted); }
+    .detail-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 9px; margin: 18px 0; }
+    .detail-box { padding: 11px; border-radius: 12px; background: #f7f8fc; }
+    .detail-box span { display: block; color: var(--muted); font-size: 11px; }
+    .detail-box strong { display: block; margin-top: 3px; font-size: 17px; }
+    .detail-chart-title { margin: 6px 0; font-size: 14px; }
+
+    @media (max-width: 1050px) {
+      .controls { grid-template-columns: repeat(3, 1fr); }
+      .controls .field:first-child { grid-column: span 3; }
+      .charts { grid-template-columns: 1fr 1fr; }
+      .charts .chart-panel:last-child { grid-column: span 2; }
+    }
+    @media (max-width: 720px) {
+      .shell { padding: 18px 12px; }
+      .hero { flex-direction: column; }
+      .status { align-self: flex-start; }
+      .controls, .stats, .charts { grid-template-columns: 1fr; }
+      .controls .field:first-child, .charts .chart-panel:last-child { grid-column: auto; }
+      .table-toolbar { align-items: flex-start; flex-direction: column; }
+      .table-toolbar-right { width: 100%; justify-content: space-between; }
+      .detail-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header class="hero">
+      <div>
+        <div class="eyebrow">ACADEMIC DNA</div>
+        <h1>Student performance explorer</h1>
+        <p class="subtitle">Explore the seven performance profiles in <code>dna.csv</code>. Search, filter, sort, and click a student for a simple performance history.</p>
+      </div>
+      <div id="loadStatus" class="status">Loading dna.csv…</div>
+    </header>
+
+    <section class="panel controls" aria-label="Filters">
+      <label class="field">
+        <span>Search all row data</span>
+        <input id="search" type="search" placeholder="Search ID, name, group, course code…">
+      </label>
+      <label class="field">
+        <span>DNA group</span>
+        <select id="groupFilter"><option value="">All groups</option></select>
+      </label>
+      <label class="field">
+        <span>Department</span>
+        <select id="departmentFilter"><option value="">All departments</option></select>
+      </label>
+      <label class="field">
+        <span>Minimum CGPA</span>
+        <input id="minCgpa" type="number" min="0" max="4" step="0.01" placeholder="Any">
+      </label>
+      <label class="field">
+        <span>Maximum CGPA</span>
+        <input id="maxCgpa" type="number" min="0" max="4" step="0.01" placeholder="Any">
+      </label>
+      <button id="reset" class="reset" type="button">Reset</button>
+    </section>
+
+    <section class="stats" aria-label="Summary statistics">
+      <article class="stat-card"><div class="stat-label">Visible students</div><div id="studentCount" class="stat-value">—</div><div id="studentCountNote" class="stat-note">of — total</div></article>
+      <article class="stat-card"><div class="stat-label">Average CGPA</div><div id="averageCgpa" class="stat-value">—</div><div class="stat-note">for the current view</div></article>
+      <article class="stat-card"><div class="stat-label">Largest group</div><div id="largestGroup" class="stat-value">—</div><div id="largestGroupNote" class="stat-note">—</div></article>
+      <article class="stat-card"><div class="stat-label">Departments</div><div id="departmentCount" class="stat-value">—</div><div class="stat-note">represented in the current view</div></article>
+    </section>
+
+    <section class="charts" aria-label="Charts">
+      <article class="panel chart-panel">
+        <div class="panel-head"><h2>Group distribution</h2><span class="panel-note">students</span></div>
+        <canvas id="groupChart" height="245"></canvas>
+        <div id="groupLegend" class="legend"></div>
+      </article>
+      <article class="panel chart-panel">
+        <div class="panel-head"><h2>Average CGPA by group</h2><span class="panel-note">0–4 scale</span></div>
+        <canvas id="cgpaChart" height="245"></canvas>
+        <div class="panel-note">Bars update with the filters above.</div>
+      </article>
+      <article class="panel chart-panel">
+        <div class="panel-head"><h2>Average course performance</h2><span class="panel-note">S-order</span></div>
+        <canvas id="progressionChart" height="245"></canvas>
+        <div class="panel-note">Average grade point across available course slots.</div>
+      </article>
+    </section>
+
+    <section class="panel table-panel">
+      <div class="table-toolbar">
+        <div class="table-toolbar-left">
+          <h2>Student data</h2>
+        </div>
+        <div class="table-toolbar-right">
+          <label>Columns <select id="columnMode" class="compact-select"><option value="summary">Summary</option><option value="all">All CSV columns</option></select></label>
+          <label>Rows <select id="pageSize" class="compact-select"><option>25</option><option>50</option><option>100</option></select></label>
+          <span id="tableCount">—</span>
+        </div>
+      </div>
+      <div class="table-scroll">
+        <table>
+          <thead id="tableHead"></thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+      </div>
+      <div class="pagination">
+        <button id="previousPage" type="button">Previous</button>
+        <span id="pageInfo">Page 1 of 1</span>
+        <button id="nextPage" type="button">Next</button>
+      </div>
+    </section>
+  </div>
+
+  <div id="detailModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="detailTitle">
+    <div class="modal-card">
+      <div class="modal-head">
+        <div>
+          <h2 id="detailTitle">Student details</h2>
+          <div id="detailMeta" class="modal-meta"></div>
+        </div>
+        <button id="closeModal" class="modal-close" type="button" aria-label="Close">×</button>
+      </div>
+      <div id="detailGrid" class="detail-grid"></div>
+      <div class="detail-chart-title">Course-point history</div>
+      <canvas id="detailChart" height="260"></canvas>
+    </div>
+  </div>
+
+  <script>
+    "use strict";
+
+    const GROUP_COLORS = ["#4f46e5", "#0f766e", "#d97706", "#dc2626", "#7c3aed", "#db2777", "#475569"];
+    const GRADE_POINTS = { "A+": 4, "A": 3.75, "A-": 3.5, "B+": 3.25, "B": 3, "B-": 2.75, "C+": 2.5, "C": 2.25, "D": 2, "F": 0 };
+    const state = { headers: [], rows: [], filteredRows: [], pointSlots: [], courseSlots: [], sortKey: "CGPA", sortDirection: -1, page: 1, pageSize: 25, columnMode: "summary" };
+
+    function escapeHtml(value) {
+      return String(value ?? "").replace(/[&<>'"]/g, character => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", "\"": "&quot;" }[character]));
+    }
+
+    function parseCsv(csvText) {
+      const rows = [];
+      let row = [];
+      let cell = "";
+      let quoted = false;
+      for (let index = 0; index < csvText.length; index += 1) {
+        const character = csvText[index];
+        const next = csvText[index + 1];
+        if (quoted) {
+          if (character === '"' && next === '"') {
+            cell += '"';
+            index += 1;
+          } else if (character === '"') {
+            quoted = false;
+          } else {
+            cell += character;
+          }
+        } else if (character === '"') {
+          quoted = true;
+        } else if (character === ",") {
+          row.push(cell);
+          cell = "";
+        } else if (character === "\n") {
+          row.push(cell.endsWith("\r") ? cell.slice(0, -1) : cell);
+          if (!(row.length === 1 && row[0] === "")) rows.push(row);
+          row = [];
+          cell = "";
+        } else {
+          cell += character;
+        }
+      }
+      if (cell.length || row.length) {
+        row.push(cell);
+        if (!(row.length === 1 && row[0] === "")) rows.push(row);
+      }
+      return rows;
+    }
+
+    function rowsToObjects(parsedRows) {
+      const headers = parsedRows[0].map(header => header.replace(/^\uFEFF/, "").trim());
+      const objects = parsedRows.slice(1).map(values => {
+        const object = {};
+        headers.forEach((header, index) => { object[header] = values[index] ?? ""; });
+        return object;
+      });
+      return { headers, objects };
+    }
+
+    function average(values) {
+      const valid = values.filter(Number.isFinite);
+      return valid.length ? valid.reduce((sum, value) => sum + value, 0) / valid.length : NaN;
+    }
+
+    function meanSlice(values, start, end) {
+      return average(values.slice(start, end));
+    }
+
+    function getPoint(row, slot) {
+      const rawPoint = String(row[`S${slot}_POINT`] ?? "").trim();
+      const point = rawPoint === "" ? NaN : Number(rawPoint);
+      if (Number.isFinite(point)) return point;
+      const grade = String(row[`S${slot}_GRADE`] ?? "").toUpperCase().replace(/[ .]/g, "");
+      return GRADE_POINTS[grade] ?? NaN;
+    }
+
+    function enhanceRow(row) {
+      const departmentMatch = String(row.ID ?? "").match(/^[A-Za-z]+/);
+      const pointsBySlot = state.pointSlots.map(slot => getPoint(row, slot));
+      const points = pointsBySlot.filter(Number.isFinite);
+      const count = points.length;
+      const quarter = Math.max(1, Math.floor(count / 4));
+      const middleStart = Math.floor(count / 3);
+      const middleEnd = Math.max(middleStart + 1, Math.floor((count * 2) / 3));
+      const first = count ? meanSlice(points, 0, quarter) : NaN;
+      const middle = count ? meanSlice(points, middleStart, middleEnd) : NaN;
+      const last = count ? meanSlice(points, -quarter) : NaN;
+      const cgpa = Number(row.CGPA);
+      const searchText = Object.values(row).join(" ").toLowerCase();
+      return Object.assign(row, {
+        _department: departmentMatch ? departmentMatch[0].toUpperCase() : "UNKNOWN",
+        _cgpa: Number.isFinite(cgpa) ? cgpa : NaN,
+        _pointsBySlot: pointsBySlot,
+        _courseCount: state.courseSlots.filter(slot => String(row[`S${slot}_CODE`] ?? "").trim()).length,
+        _averagePoint: average(points),
+        _firstPoint: first,
+        _middlePoint: middle,
+        _lastPoint: last,
+        _trend: Number.isFinite(first) && Number.isFinite(last) ? last - first : NaN,
+        _stability: count ? Math.sqrt(points.reduce((sum, value) => sum + Math.pow(value - average(points), 2), 0) / count) : NaN,
+        _searchText: searchText,
+      });
+    }
+
+    function groupNumber(group) {
+      const match = String(group).match(/Group\s+(\d+)/i);
+      return match ? Number(match[1]) : 99;
+    }
+
+    function groupColor(group) {
+      return GROUP_COLORS[(groupNumber(group) - 1 + GROUP_COLORS.length) % GROUP_COLORS.length];
+    }
+
+    function populateFilters() {
+      const groupFilter = document.getElementById("groupFilter");
+      const departmentFilter = document.getElementById("departmentFilter");
+      const groups = [...new Set(state.rows.map(row => row.DNA_GROUP).filter(Boolean))].sort((a, b) => groupNumber(a) - groupNumber(b));
+      const departments = [...new Set(state.rows.map(row => row._department).filter(Boolean))].sort();
+      groups.forEach(group => groupFilter.insertAdjacentHTML("beforeend", `<option value="${escapeHtml(group)}">${escapeHtml(group)}</option>`));
+      departments.forEach(department => departmentFilter.insertAdjacentHTML("beforeend", `<option value="${escapeHtml(department)}">${escapeHtml(department)}</option>`));
+      document.getElementById("groupLegend").innerHTML = groups.map(group => `<div class="legend-item"><span class="legend-swatch" style="background:${groupColor(group)}"></span><span title="${escapeHtml(group)}">${escapeHtml(group)}</span></div>`).join("");
+    }
+
+    function applyFilters() {
+      const query = document.getElementById("search").value.trim().toLowerCase();
+      const group = document.getElementById("groupFilter").value;
+      const department = document.getElementById("departmentFilter").value;
+      const minimum = Number(document.getElementById("minCgpa").value);
+      const maximum = Number(document.getElementById("maxCgpa").value);
+      state.filteredRows = state.rows.filter(row => {
+        if (query && !row._searchText.includes(query)) return false;
+        if (group && row.DNA_GROUP !== group) return false;
+        if (department && row._department !== department) return false;
+        if (Number.isFinite(minimum) && (!Number.isFinite(row._cgpa) || row._cgpa < minimum)) return false;
+        if (Number.isFinite(maximum) && (!Number.isFinite(row._cgpa) || row._cgpa > maximum)) return false;
+        return true;
+      });
+      state.page = 1;
+      render();
+    }
+
+    function sortValue(row, key) {
+      if (key.startsWith("_")) return row[key];
+      const raw = row[key] ?? "";
+      const numeric = Number(raw);
+      return raw !== "" && Number.isFinite(numeric) ? numeric : String(raw).toLowerCase();
+    }
+
+    function sortedRows() {
+      return [...state.filteredRows].sort((left, right) => {
+        const a = sortValue(left, state.sortKey);
+        const b = sortValue(right, state.sortKey);
+        if (a === b) return 0;
+        if (typeof a === "number" && typeof b === "number") return state.sortDirection * (a - b);
+        return state.sortDirection * String(a).localeCompare(String(b));
+      });
+    }
+
+    function summaryColumns() {
+      return [
+        ["DNA_GROUP", "DNA group"],
+        ["ID", "ID"],
+        ["NAME", "Name"],
+        ["_department", "Department"],
+        ["CGPA", "CGPA"],
+        ["_courseCount", "Courses"],
+        ["_averagePoint", "Avg point"],
+        ["_firstPoint", "First"],
+        ["_lastPoint", "Last"],
+        ["_trend", "Trend"],
+      ];
+    }
+
+    function activeColumns() {
+      return state.columnMode === "all" ? state.headers.map(header => [header, header]) : summaryColumns();
+    }
+
+    function formatCell(row, key) {
+      const value = key.startsWith("_") ? row[key] : row[key];
+      if (value === undefined || value === null || value === "" || (typeof value === "number" && !Number.isFinite(value))) return "—";
+      if (key === "DNA_GROUP") return `<span class="group-badge" style="background:${groupColor(value)}22;color:${groupColor(value)}">${escapeHtml(value)}</span>`;
+      if (["CGPA", "_averagePoint", "_firstPoint", "_lastPoint", "_trend"].includes(key)) return `<span class="num">${Number(value).toFixed(3)}</span>`;
+      return escapeHtml(value);
+    }
+
+    function renderTable() {
+      const rows = sortedRows();
+      const columns = activeColumns();
+      const totalPages = Math.max(1, Math.ceil(rows.length / state.pageSize));
+      if (state.page > totalPages) state.page = totalPages;
+      const start = (state.page - 1) * state.pageSize;
+      const pageRows = rows.slice(start, start + state.pageSize);
+      const head = document.getElementById("tableHead");
+      const body = document.getElementById("tableBody");
+      head.innerHTML = `<tr>${columns.map(([key, label]) => {
+        const arrow = key === state.sortKey ? (state.sortDirection === 1 ? " ▲" : " ▼") : "";
+        return `<th><button type="button" data-sort-key="${escapeHtml(key)}">${escapeHtml(label)}${arrow}</button></th>`;
+      }).join("")}</tr>`;
+      body.innerHTML = pageRows.length ? pageRows.map(row => `<tr>${columns.map(([key]) => `<td>${formatCell(row, key)}</td>`).join("")}</tr>`).join("") : `<tr><td colspan="${columns.length}">No matching students.</td></tr>`;
+      head.querySelectorAll("button[data-sort-key]").forEach(button => button.addEventListener("click", () => {
+        const key = button.dataset.sortKey;
+        if (state.sortKey === key) state.sortDirection *= -1;
+        else { state.sortKey = key; state.sortDirection = typeof sortValue(state.filteredRows[0] || {}, key) === "number" ? -1 : 1; }
+        renderTable();
+      }));
+      body.querySelectorAll("tr").forEach((tr, index) => {
+        if (pageRows[index]) tr.addEventListener("click", () => openDetails(pageRows[index]));
+      });
+      document.getElementById("tableCount").textContent = `${rows.length.toLocaleString()} matching`;
+      document.getElementById("pageInfo").textContent = `Page ${state.page} of ${totalPages}`;
+      document.getElementById("previousPage").disabled = state.page <= 1;
+      document.getElementById("nextPage").disabled = state.page >= totalPages;
+    }
+
+    function renderStats(rows) {
+      const cgpas = rows.map(row => row._cgpa).filter(Number.isFinite);
+      const groupCounts = countBy(rows, row => row.DNA_GROUP);
+      const top = Object.entries(groupCounts).sort((a, b) => b[1] - a[1])[0];
+      document.getElementById("studentCount").textContent = rows.length.toLocaleString();
+      document.getElementById("studentCountNote").textContent = `of ${state.rows.length.toLocaleString()} total`;
+      document.getElementById("averageCgpa").textContent = average(cgpas).toFixed(3) === "NaN" ? "—" : average(cgpas).toFixed(3);
+      document.getElementById("largestGroup").textContent = top ? `G${groupNumber(top[0])}` : "—";
+      document.getElementById("largestGroupNote").textContent = top ? top[0].replace(/^Group\s+\d+:\s*/, "") : "—";
+      document.getElementById("departmentCount").textContent = new Set(rows.map(row => row._department)).size.toString();
+    }
+
+    function countBy(rows, getKey) {
+      return rows.reduce((counts, row) => {
+        const key = getKey(row) || "Unknown";
+        counts[key] = (counts[key] || 0) + 1;
+        return counts;
+      }, {});
+    }
+
+    function canvasContext(canvas) {
+      const rect = canvas.getBoundingClientRect();
+      const ratio = window.devicePixelRatio || 1;
+      const width = Math.max(280, rect.width);
+      const height = Math.max(220, rect.height);
+      canvas.width = width * ratio;
+      canvas.height = height * ratio;
+      const context = canvas.getContext("2d");
+      context.setTransform(ratio, 0, 0, ratio, 0, 0);
+      context.clearRect(0, 0, width, height);
+      return { context, width, height };
+    }
+
+    function chartText(context, text, x, y, options = {}) {
+      context.fillStyle = options.color || "#667085";
+      context.font = options.font || "11px Inter, system-ui, sans-serif";
+      context.textAlign = options.align || "left";
+      context.fillText(text, x, y);
+    }
+
+    function drawGroupChart(rows) {
+      const { context, width, height } = canvasContext(document.getElementById("groupChart"));
+      const counts = countBy(rows, row => row.DNA_GROUP);
+      const groups = Object.keys(counts).sort((a, b) => groupNumber(a) - groupNumber(b));
+      const max = Math.max(1, ...groups.map(group => counts[group]));
+      const left = 38, right = 10, top = 18, bottom = 35;
+      const chartWidth = width - left - right, chartHeight = height - top - bottom;
+      context.strokeStyle = "#e4e9f2";
+      context.lineWidth = 1;
+      for (let tick = 0; tick <= 4; tick += 1) {
+        const y = top + chartHeight - (chartHeight * tick / 4);
+        context.beginPath(); context.moveTo(left, y); context.lineTo(width - right, y); context.stroke();
+        chartText(context, Math.round(max * tick / 4).toLocaleString(), left - 7, y + 4, { align: "right" });
+      }
+      const slotWidth = chartWidth / Math.max(groups.length, 1);
+      groups.forEach((group, index) => {
+        const barWidth = Math.min(52, slotWidth * .55);
+        const barHeight = chartHeight * counts[group] / max;
+        const x = left + slotWidth * index + (slotWidth - barWidth) / 2;
+        const y = top + chartHeight - barHeight;
+        context.fillStyle = groupColor(group);
+        context.fillRect(x, y, barWidth, barHeight);
+        chartText(context, counts[group].toLocaleString(), x + barWidth / 2, Math.max(top + 12, y - 6), { align: "center", color: "#14213d", font: "700 11px Inter, system-ui, sans-serif" });
+        chartText(context, `G${groupNumber(group)}`, x + barWidth / 2, height - 13, { align: "center", color: groupColor(group), font: "700 11px Inter, system-ui, sans-serif" });
+      });
+    }
+
+    function drawCgpaChart(rows) {
+      const { context, width, height } = canvasContext(document.getElementById("cgpaChart"));
+      const groups = [...new Set(state.rows.map(row => row.DNA_GROUP).filter(Boolean))].sort((a, b) => groupNumber(a) - groupNumber(b));
+      const values = groups.map(group => average(rows.filter(row => row.DNA_GROUP === group).map(row => row._cgpa).filter(Number.isFinite)));
+      const left = 38, right = 12, top = 18, bottom = 35;
+      const chartWidth = width - left - right, chartHeight = height - top - bottom;
+      context.strokeStyle = "#e4e9f2";
+      for (let tick = 0; tick <= 4; tick += 1) {
+        const y = top + chartHeight - chartHeight * tick / 4;
+        context.beginPath(); context.moveTo(left, y); context.lineTo(width - right, y); context.stroke();
+        chartText(context, tick.toString(), left - 7, y + 4, { align: "right" });
+      }
+      const slotWidth = chartWidth / Math.max(groups.length, 1);
+      groups.forEach((group, index) => {
+        const value = Number.isFinite(values[index]) ? values[index] : 0;
+        const barWidth = Math.min(48, slotWidth * .55);
+        const barHeight = chartHeight * Math.max(0, Math.min(4, value)) / 4;
+        const x = left + slotWidth * index + (slotWidth - barWidth) / 2;
+        const y = top + chartHeight - barHeight;
+        context.fillStyle = groupColor(group);
+        context.fillRect(x, y, barWidth, barHeight);
+        chartText(context, Number.isFinite(values[index]) ? values[index].toFixed(2) : "—", x + barWidth / 2, Math.max(top + 12, y - 6), { align: "center", color: "#14213d", font: "700 10px Inter, system-ui, sans-serif" });
+        chartText(context, `G${groupNumber(group)}`, x + barWidth / 2, height - 13, { align: "center", color: groupColor(group), font: "700 11px Inter, system-ui, sans-serif" });
+      });
+    }
+
+    function drawProgressionChart(rows) {
+      const { context, width, height } = canvasContext(document.getElementById("progressionChart"));
+      const averages = state.pointSlots.map((_, index) => average(rows.map(row => row._pointsBySlot[index]).filter(Number.isFinite)));
+      drawLine(context, width, height, averages, "#4f46e5", "S");
+    }
+
+    function drawStudentChart(row) {
+      const { context, width, height } = canvasContext(document.getElementById("detailChart"));
+      drawLine(context, width, height, row._pointsBySlot, groupColor(row.DNA_GROUP), "S");
+    }
+
+    function drawLine(context, width, height, values, color, prefix) {
+      const valid = values.filter(Number.isFinite);
+      const min = 0, max = 4;
+      const left = 40, right = 14, top = 15, bottom = 32;
+      const chartWidth = width - left - right, chartHeight = height - top - bottom;
+      context.strokeStyle = "#e4e9f2";
+      context.fillStyle = "#e4e9f2";
+      for (let tick = 0; tick <= 4; tick += 1) {
+        const y = top + chartHeight - chartHeight * tick / 4;
+        context.beginPath(); context.moveTo(left, y); context.lineTo(width - right, y); context.stroke();
+        chartText(context, tick.toString(), left - 8, y + 4, { align: "right" });
+      }
+      if (!valid.length) {
+        chartText(context, "No grade points available", width / 2, height / 2, { align: "center" });
+        return;
+      }
+      const points = values.map((value, index) => ({ value, index })).filter(item => Number.isFinite(item.value));
+      context.strokeStyle = color;
+      context.lineWidth = 2.5;
+      context.beginPath();
+      points.forEach((item, index) => {
+        const x = left + chartWidth * item.index / Math.max(values.length - 1, 1);
+        const y = top + chartHeight - chartHeight * (item.value - min) / (max - min);
+        if (index === 0) context.moveTo(x, y); else context.lineTo(x, y);
+      });
+      context.stroke();
+      points.forEach(item => {
+        const x = left + chartWidth * item.index / Math.max(values.length - 1, 1);
+        const y = top + chartHeight - chartHeight * (item.value - min) / (max - min);
+        context.fillStyle = color;
+        context.beginPath(); context.arc(x, y, 3, 0, Math.PI * 2); context.fill();
+      });
+      [0, Math.floor((values.length - 1) / 2), values.length - 1].filter((value, index, array) => array.indexOf(value) === index).forEach(index => {
+        const x = left + chartWidth * index / Math.max(values.length - 1, 1);
+        chartText(context, `${prefix}${index + 1}`, x, height - 12, { align: "center" });
+      });
+    }
+
+    function renderCharts() {
+      drawGroupChart(state.filteredRows);
+      drawCgpaChart(state.filteredRows);
+      drawProgressionChart(state.filteredRows);
+    }
+
+    function render() {
+      renderStats(state.filteredRows);
+      renderCharts();
+      renderTable();
+    }
+
+    function openDetails(row) {
+      document.getElementById("detailTitle").textContent = row.NAME || row.ID || "Student details";
+      document.getElementById("detailMeta").textContent = `${row.ID || "No ID"} · ${row._department} · ${row.DNA_GROUP || "No group"}`;
+      const details = [
+        ["CGPA", Number.isFinite(row._cgpa) ? row._cgpa.toFixed(3) : "—"],
+        ["Courses", row._courseCount],
+        ["Average point", Number.isFinite(row._averagePoint) ? row._averagePoint.toFixed(3) : "—"],
+        ["First → last", Number.isFinite(row._trend) ? `${row._trend >= 0 ? "+" : ""}${row._trend.toFixed(3)}` : "—"],
+      ];
+      document.getElementById("detailGrid").innerHTML = details.map(([label, value]) => `<div class="detail-box"><span>${escapeHtml(label)}</span><strong>${escapeHtml(value)}</strong></div>`).join("");
+      document.getElementById("detailModal").classList.add("open");
+      requestAnimationFrame(() => drawStudentChart(row));
+    }
+
+    function closeDetails() {
+      document.getElementById("detailModal").classList.remove("open");
+    }
+
+    async function loadData() {
+      const response = await fetch("../dna.csv", { cache: "no-store" });
+      if (!response.ok) throw new Error(`Could not load dna.csv (${response.status})`);
+      const parsed = rowsToObjects(parseCsv(await response.text()));
+      state.headers = parsed.headers;
+      state.pointSlots = state.headers.map(header => {
+        const match = header.match(/^S(\d+)_POINT$/i);
+        return match ? Number(match[1]) : null;
+      }).filter(Number.isFinite).sort((a, b) => a - b);
+      const gradeSlots = state.headers.map(header => {
+        const match = header.match(/^S(\d+)_GRADE$/i);
+        return match ? Number(match[1]) : null;
+      }).filter(Number.isFinite);
+      state.pointSlots = [...new Set([...state.pointSlots, ...gradeSlots])].sort((a, b) => a - b);
+      state.courseSlots = state.headers.map(header => {
+        const match = header.match(/^S(\d+)_CODE$/i);
+        return match ? Number(match[1]) : null;
+      }).filter(Number.isFinite).sort((a, b) => a - b);
+      state.rows = parsed.objects.map(enhanceRow);
+      state.filteredRows = state.rows;
+      populateFilters();
+      document.getElementById("loadStatus").textContent = `Loaded ${state.rows.length.toLocaleString()} students`;
+      render();
+    }
+
+    ["search", "groupFilter", "departmentFilter", "minCgpa", "maxCgpa"].forEach(id => document.getElementById(id).addEventListener("input", applyFilters));
+    document.getElementById("reset").addEventListener("click", () => {
+      ["search", "minCgpa", "maxCgpa"].forEach(id => { document.getElementById(id).value = ""; });
+      ["groupFilter", "departmentFilter"].forEach(id => { document.getElementById(id).value = ""; });
+      applyFilters();
+    });
+    document.getElementById("columnMode").addEventListener("change", event => { state.columnMode = event.target.value; renderTable(); });
+    document.getElementById("pageSize").addEventListener("change", event => { state.pageSize = Number(event.target.value); state.page = 1; renderTable(); });
+    document.getElementById("previousPage").addEventListener("click", () => { if (state.page > 1) { state.page -= 1; renderTable(); } });
+    document.getElementById("nextPage").addEventListener("click", () => { const pages = Math.max(1, Math.ceil(state.filteredRows.length / state.pageSize)); if (state.page < pages) { state.page += 1; renderTable(); } });
+    document.getElementById("closeModal").addEventListener("click", closeDetails);
+    document.getElementById("detailModal").addEventListener("click", event => { if (event.target.id === "detailModal") closeDetails(); });
+    document.addEventListener("keydown", event => { if (event.key === "Escape") closeDetails(); });
+    window.addEventListener("resize", () => { if (state.rows.length) renderCharts(); });
+
+    loadData().catch(error => {
+      document.getElementById("loadStatus").textContent = "Could not load dna.csv";
+      document.getElementById("loadStatus").style.color = "#b42318";
+      console.error(error);
+    });
+  </script>
+</body>
+</html>
