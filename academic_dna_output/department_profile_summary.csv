@@ -1,0 +1,27 @@
+department,kmeans_profile,student_count
+ARCH,Late Bloomers,37
+ARCH,Consistent Performers,28
+ARCH,Declining Performers,27
+ARCH,Struggling Students,3
+BBA,Declining Performers,461
+BBA,Consistent Performers,443
+BBA,Struggling Students,64
+CE,Declining Performers,31
+CE,Consistent Performers,21
+CE,Late Bloomers,20
+CE,Struggling Students,12
+CSE,Declining Performers,580
+CSE,Consistent Performers,355
+CSE,Late Bloomers,278
+CSE,Struggling Students,185
+EEE,Declining Performers,69
+EEE,Consistent Performers,36
+EEE,Struggling Students,23
+EEE,Late Bloomers,7
+ELL,Declining Performers,307
+ELL,Late Bloomers,126
+ELL,Struggling Students,52
+ELL,Consistent Performers,9
+JMC,Declining Performers,67
+JMC,Consistent Performers,35
+JMC,Struggling Students,17
