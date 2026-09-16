@@ -6,7 +6,7 @@ const path = require("path");
 const { URL } = require("url");
 
 const ROOT = __dirname;
-const PORT = Number(process.env.PORT || 3000);
+const START_PORT = Number(process.env.PORT || 3000);
 
 const MIME_TYPES = {
   ".html": "text/html; charset=utf-8",
@@ -31,7 +31,7 @@ function safeFilePath(requestPath) {
   return filePath;
 }
 
-const server = http.createServer((request, response) => {
+function requestHandler(request, response) {
   if (request.method !== "GET" && request.method !== "HEAD") {
     response.writeHead(405, { "Content-Type": "text/plain; charset=utf-8" });
     response.end("Method not allowed");
@@ -77,10 +77,22 @@ const server = http.createServer((request, response) => {
     }
     fs.createReadStream(filePath).pipe(response);
   });
-});
+}
 
-server.listen(PORT, () => {
-  console.log(`Academic DNA dashboard: http://localhost:${PORT}/dna/`);
-  console.log("Press Ctrl+C to stop the server.");
-});
+function startServer(port) {
+  const server = http.createServer(requestHandler);
+  server.once("error", (error) => {
+    if (error.code === "EADDRINUSE") {
+      console.warn(`Port ${port} is busy. Trying port ${port + 1}...`);
+      startServer(port + 1);
+      return;
+    }
+    throw error;
+  });
+  server.listen(port, () => {
+    console.log(`Academic DNA dashboard: http://localhost:${port}/dna/`);
+    console.log("Press Ctrl+C to stop the server.");
+  });
+}
 
+startServer(START_PORT);

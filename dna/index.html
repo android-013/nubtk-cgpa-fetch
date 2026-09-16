@@ -344,8 +344,10 @@
       const query = document.getElementById("search").value.trim().toLowerCase();
       const group = document.getElementById("groupFilter").value;
       const department = document.getElementById("departmentFilter").value;
-      const minimum = Number(document.getElementById("minCgpa").value);
-      const maximum = Number(document.getElementById("maxCgpa").value);
+      const minimumText = document.getElementById("minCgpa").value.trim();
+      const maximumText = document.getElementById("maxCgpa").value.trim();
+      const minimum = minimumText === "" ? NaN : Number(minimumText);
+      const maximum = maximumText === "" ? NaN : Number(maximumText);
       state.filteredRows = state.rows.filter(row => {
         if (query && !row._searchText.includes(query)) return false;
         if (group && row.DNA_GROUP !== group) return false;
