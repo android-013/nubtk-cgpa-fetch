@@ -19,10 +19,39 @@ https://nubtkhulna.ac.bd/ter/panel/overallresult
 
 | File              | Description                                                      |
 |-------------------|------------------------------------------------------------------|
-| `checkDept.js`    | Find existing department                                         |
-| `checkDP.js`      | Find existing department                                         |
-| `checkPara.js`    | Check multiple in parallel                                       |
 | `checkUsers.js`   | Check users one at a time `main program`                         |
+| `dna.js`          | Academic dna data visualisation                                  |
+| `dna.py`          | Simple academic analysis                                         |
+| `dna.csv`         | Dna analysis clustering                                          |
+| `clean.js`        | Clean all students course data                                   |
+| `clean.csv`       | Combined cleaned data                                            |
+|-------------------|------------------------------------------------------------------|
+| `arch.json`       | Architecture department                                          |
+| `bba.json`        | Business Administration department                               |
+| `ce.json`         | Civil Engineering department                                     |
+| `cse.json`        | Computer Science & Engineering department                        |
+| `eee.json`        | Electrical and Electronic Engineering department                 |
+| `ell.json`        | English Language & Literature department                         |
+| `jmc.json`        | Journalism and Mass Communication department                     |
+|-------------------|------------------------------------------------------------------|
+| `arch25.json`     | Architecture department upto fall 2025                           |
+| `bba25.json`      | Business Administration department upto fall 2025                |
+| `ce25.json`       | Civil Engineering department upto fall 2025                      |
+| `cse25.json`      | Computer Science & Engineering department upto fall 2025         |
+| `eee25.json`      | Electrical and Electronic Engineering department upto fall 2025  |
+| `ell25.json`      | English Language & Literature department upto fall 2025          |
+| `jmc25.json`      | Journalism and Mass Communication department upto fall 2025      |
+|-------------------|------------------------------------------------------------------|
+| `archC.json`      | Architecture department with Courses                             |
+| `bbaC.json`       | Business Administration department with Courses                  |
+| `ceC.json`        | Civil Engineering department with Courses                        |
+| `cseC.json`       | Computer Science & Engineering department with Courses           |
+| `eeeC.json`       | Electrical and Electronic Engineering department with Courses    |
+| `ellC.json`       | English Language & Literature department with Courses            |
+| `jmcC.json`       | Journalism and Mass Communication department with Courses        |
+|-------------------|------------------------------------------------------------------|
+  
+
 - `npm.json`, `package.json`: Node.js project configuration and dependencies.
 
 ## CheckUsers.js Algorithm
@@ -61,19 +90,6 @@ Open the script and review the constants at the top:
     - Print a summary table to console.
     - Write `results.json` with collected records.
 ---
-
-## Data Obtained
-
-| File                      | Description                                  |
-|---------------------------|----------------------------------------------|
-| `arch.json`               | Architecture Students                        |
-| `ce.json`                 | Civil Engineering                            |
-| `bba.json`                | Business Administration                      |
-| `cse.json`                | Computer Science & Engineering               |
-| `eee.json`                | Electrical and Electronic Engineering        |
-| `ell.json`                | English Language & Literature                |
-| `jmc.json`                | Journalism and Mass Communication            |
-| `results.json`            | Initial Results after checking all students  |
 
 ## Getting Started
 1. **Install dependencies**:
