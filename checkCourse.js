@@ -7,8 +7,8 @@ const rollStart = 44;
 const rollEnd = 3000;
 const failCheck = 50; // consecutive failures before skipping session
 const partition = 3; // 1 = commerce, 2 = science, 3 = arts
-const sessionStart = 21;
-const sessionEnd = 25;
+const sessionStart = 16;
+const sessionEnd = 26;
 
 let successCount = 0;
 

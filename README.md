@@ -144,6 +144,142 @@ flowchart TD
 
 extended version of checkuser.js which scraps all course data including serial number, course code, course title, creadit hour, grade, cgpa all together
 
+```mermaid
+flowchart TD
+
+A([START]) --> B["Load Puppeteer and fs"]
+
+B --> C["Define Configuration<br/>
+baseUrl, department, roll range,<br/>
+session range, partition, failCheck"]
+
+C --> D["Define appendToJSON()"]
+
+D --> E["Check JSON file exists?"]
+
+E -->|YES| F["Read existing JSON data"]
+E -->|NO| G["Create empty data array"]
+
+F --> H["Parse JSON data"]
+G --> H
+
+H --> I["Push new data and write JSON file"]
+
+I --> J["Define retry() function<br/>
+Retry failed operations 3 times"]
+
+J --> K["Launch Puppeteer Browser"]
+
+K --> L["Initialize variables<br/>
+unchanged = []<br/>
+lastSuccessRoll = rollStart"]
+
+L --> M{"FOR year = sessionStart to sessionEnd"}
+
+M --> N{"FOR term = 01, 03"}
+
+N --> O["Create session ID<br/>year + term"]
+
+O --> P["failureCount = 0<br/>skipSession = false"]
+
+P --> Q{"FOR roll = lastSuccessRoll to rollEnd"}
+
+Q --> R["Generate User ID<br/>
+department + session + partition + roll"]
+
+R --> S["Create new browser page"]
+
+S --> T["Set navigation timeout 20 seconds"]
+
+T --> U["TRY"]
+
+U --> V["Open login page using retry()"]
+
+V --> W["Enter username and password"]
+
+W --> X["Click submit and wait navigation"]
+
+X --> Y{"URL contains panel?"}
+
+
+Y -->|YES| Z["Login Success"]
+
+Z --> AA["Reset failureCount = 0<br/>
+Update lastSuccessRoll<br/>
+Increase successCount"]
+
+AA --> AB["Open overall result page"]
+
+AB --> AC["Extract Student Information"]
+
+AC --> AD["Extract ID and Name"]
+
+AD --> AE["Extract Course Table"]
+
+AE --> AF["Extract CGPA"]
+
+AF --> AG["Create student data object"]
+
+AG --> AH["appendToJSON(data)"]
+
+AH --> AI["Logout"]
+
+AI --> AJ["Continue"]
+
+Y -->|NO| AK["Login Failed<br/>failureCount++"]
+
+
+AK --> AL{"failureCount >= failCheck?"}
+
+AL -->|YES| AM["skipSession = true<br/>Break roll loop"]
+
+AL -->|NO| AJ
+
+
+U --> AN["CATCH Error"]
+
+AN --> AO["Increase failureCount"]
+
+AO --> AP["Print timeout/error"]
+
+AP --> AQ{"failureCount >= failCheck?"}
+
+AQ -->|YES| AM
+
+AQ -->|NO| AJ
+
+
+AJ --> AR["FINALLY"]
+
+AM --> AR
+
+AR --> AS["Close browser page"]
+
+AS --> AT{"skipSession?"}
+
+AT -->|YES| AU["Break current session"]
+
+AT -->|NO| AV["Wait 500ms throttle"]
+
+AV --> Q
+
+AU --> N
+
+N -->|Next term| N
+
+N --> M
+
+M -->|Next year| M
+
+
+M --> AW["Close browser"]
+
+AW --> AX["Print COMPLETE"]
+
+AX --> AY([END])
+
+```
+
 ### Configuration
 
 Open the script and review the constants at the top:
