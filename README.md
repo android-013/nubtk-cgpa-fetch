@@ -57,73 +57,87 @@ https://nubtkhulna.ac.bd/ter/panel/overallresult
 
 ## CheckUsers.js Algorithm
 
-START
-│
-├── Load Puppeteer + fs
-├── Define configuration
-├── Define retry()
-│
-├── Launch browser
-├── results = []
-├── lastSuccessRoll = rollStart
-│
-├── FOR year = 16 → 26
-│   │
-│   └── FOR term = ["03", "01"]
-│       │
-│       ├── Build session
-│       ├── failureCount = 0
-│       ├── skipSession = false
-│       │
-│       └── FOR roll = lastSuccessRoll → rollEnd
-│           │
-│           ├── Generate userId
-│           ├── Create page
-│           ├── Set 20s timeout
-│           │
-│           ├── TRY
-│           │   │
-│           │   ├── Open login page using retry()
-│           │   ├── Enter username
-│           │   ├── Enter password
-│           │   ├── Submit
-│           │   │
-│           │   └── Is URL "panel"?
-│           │       │
-│           │       ├── YES
-│           │       │   ├── failureCount = 0
-│           │       │   ├── lastSuccessRoll = roll + 1
-│           │       │   ├── successCount++
-│           │       │   ├── Open overall result
-│           │       │   ├── Extract name
-│           │       │   ├── Extract CGPA
-│           │       │   ├── Save result
-│           │       │   └── Logout
-│           │       │
-│           │       └── NO
-│           │           ├── failureCount++
-│           │           └── failureCount >= 40?
-│           │               └── YES → skip session
-│           │
-│           ├── CATCH
-│           │   ├── failureCount++
-│           │   ├── Print error
-│           │   └── failureCount >= 40?
-│           │       └── YES → skip session
-│           │
-│           ├── FINALLY
-│           │   └── Close page
-│           │
-│           ├── skipSession?
-│           │   └── YES → break
-│           │
-│           └── Wait 500ms
-│
-├── Close browser
-├── Print results table
-├── Write results.json
-│
-└── END
+```mermaid
+flowchart TD
+
+    A([START]) --> B["Load Puppeteer + fs"]
+    B --> C["Define configuration"]
+    C --> D["Define retry function"]
+    D --> E["Launch browser"]
+    E --> F["results = []<br/>lastSuccessRoll = rollStart"]
+
+    F --> G{"FOR year = 16 to 26"}
+
+    G --> H{"FOR term = 03 or 01"}
+
+    H --> I["Build session"]
+    I --> J["failureCount = 0<br/>skipSession = false"]
+
+    J --> K{"FOR roll = lastSuccessRoll to rollEnd"}
+
+    K --> L["Generate userId"]
+    L --> M["Create page"]
+    M --> N["Set 20s timeout"]
+
+    N --> O["TRY"]
+
+    O --> P["Open login page using retry"]
+    P --> Q["Enter username"]
+    Q --> R["Enter password"]
+    R --> S["Submit"]
+
+    S --> T{"Is URL panel?"}
+
+    T -->|YES| U["failureCount = 0<br/>lastSuccessRoll = roll + 1<br/>successCount++"]
+
+    U --> V["Open overall result"]
+    V --> W["Extract name"]
+    W --> X["Extract CGPA"]
+    X --> Y["Save result"]
+    Y --> Z["Logout"]
+
+    T -->|NO| AA["failureCount++"]
+
+    AA --> AB{"failureCount >= 40?"}
+
+    AB -->|YES| AC["skipSession = true"]
+    AB -->|NO| K
+
+
+    O --> AD["CATCH"]
+
+    AD --> AE["failureCount++"]
+    AE --> AF["Print error"]
+
+    AF --> AG{"failureCount >= 40?"}
+
+    AG -->|YES| AC
+    AG -->|NO| K
+
+
+    Z --> AH["FINALLY"]
+    AC --> AH
+
+    AH --> AI["Close page"]
+
+    AI --> AJ{"skipSession?"}
+
+    AJ -->|YES| AK["Break inner roll loop"]
+
+    AJ -->|NO| AL["Wait 500ms"]
+
+    AL --> K
+
+    AK --> H
+
+    H --> G
+
+    G --> AM["Close browser"]
+    AM --> AN["Print results table"]
+    AN --> AO["Write results.json"]
+
+    AO --> AP([END])
+```
 
 ### Later version
 `checkCourse.js`
