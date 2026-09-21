@@ -20,6 +20,7 @@ https://nubtkhulna.ac.bd/ter/panel/overallresult
 | File              | Description                                                      |
 |-------------------|------------------------------------------------------------------|
 | `checkUsers.js`   | Check users one at a time `main program`                         |
+| `checkCourse.js`  | Extract all data `extended version of checkUsers.js`             |
 | `dna.js`          | Academic dna data visualisation                                  |
 | `dna.py`          | Simple academic analysis                                         |
 | `dna.csv`         | Dna analysis clustering                                          |
@@ -123,6 +124,11 @@ START
 ├── Write results.json
 │
 └── END
+
+### Later version
+`checkCourse.js`
+
+extended version of checkuser.js which scraps all course data including serial number, course code, course title, creadit hour, grade, cgpa all together
 
 ### Configuration
 
