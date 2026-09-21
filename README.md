@@ -60,89 +60,143 @@ https://nubtkhulna.ac.bd/ter/panel/overallresult
 ```mermaid
 flowchart TD
 
-    A([START]) --> B["Load Puppeteer + fs"]
-    B --> C["Define configuration"]
-    C --> D["Define retry function"]
-    D --> E["Launch browser"]
-    E --> F["results = []<br/>lastSuccessRoll = rollStart"]
+A([START]) --> B["Load Puppeteer + fs"]
+B --> C["Define configuration"]
+C --> D["Define retry function"]
+D --> E["Launch browser"]
+E --> F["results = []<br/>lastSuccessRoll = rollStart"]
 
-    F --> G{"FOR year = 16 to 26"}
+F --> G{"FOR year = 16 → 26"}
 
-    G --> H{"FOR term = 03 or 01"}
+G --> H{"FOR term = 03, 01"}
 
-    H --> I["Build session"]
-    I --> J["failureCount = 0<br/>skipSession = false"]
+H --> I["Build session"]
+I --> J["failureCount = 0<br/>skipSession = false"]
 
-    J --> K{"FOR roll = lastSuccessRoll to rollEnd"}
+J --> K{"FOR roll = lastSuccessRoll → rollEnd"}
 
-    K --> L["Generate userId"]
-    L --> M["Create page"]
-    M --> N["Set 20s timeout"]
+K --> L["Generate userId"]
+L --> M["Create page"]
+M --> N["Set 20s timeout"]
 
-    N --> O["TRY"]
+N --> O["TRY"]
 
-    O --> P["Open login page using retry"]
-    P --> Q["Enter username"]
-    Q --> R["Enter password"]
-    R --> S["Submit"]
+O --> P["Open login page using retry()"]
+P --> Q["Enter username"]
+Q --> R["Enter password"]
+R --> S["Submit"]
 
-    S --> T{"Is URL panel?"}
-
-    T -->|YES| U["failureCount = 0<br/>lastSuccessRoll = roll + 1<br/>successCount++"]
-
-    U --> V["Open overall result"]
-    V --> W["Extract name"]
-    W --> X["Extract CGPA"]
-    X --> Y["Save result"]
-    Y --> Z["Logout"]
-
-    T -->|NO| AA["failureCount++"]
-
-    AA --> AB{"failureCount >= 40?"}
-
-    AB -->|YES| AC["skipSession = true"]
-    AB -->|NO| K
+S --> T{"Is URL panel?"}
 
 
-    O --> AD["CATCH"]
+T -->|YES| U["Login Success"]
 
-    AD --> AE["failureCount++"]
-    AE --> AF["Print error"]
+U --> V["Reset failureCount = 0<br/>Update lastSuccessRoll<br/>successCount++"]
 
-    AF --> AG{"failureCount >= 40?"}
+V --> W["Open overall result"]
 
-    AG -->|YES| AC
-    AG -->|NO| K
+W --> X["Extract Name"]
+
+X --> Y["Extract CGPA"]
+
+Y --> Z["Save result"]
+
+Z --> AA["Logout"]
 
 
-    Z --> AH["FINALLY"]
-    AC --> AH
+T -->|NO| AB["Login Failed<br/>failureCount++"]
 
-    AH --> AI["Close page"]
+AB --> AC{"failureCount >= 40?"}
 
-    AI --> AJ{"skipSession?"}
+AC -->|YES| AD["skipSession = true"]
 
-    AJ -->|YES| AK["Break inner roll loop"]
+AC -->|NO| K
 
-    AJ -->|NO| AL["Wait 500ms"]
 
-    AL --> K
+O --> AE["CATCH"]
 
-    AK --> H
+AE --> AF["failureCount++"]
 
-    H --> G
+AF --> AG["Print error"]
 
-    G --> AM["Close browser"]
-    AM --> AN["Print results table"]
-    AN --> AO["Write results.json"]
+AG --> AH{"failureCount >= 40?"}
 
-    AO --> AP([END])
+AH -->|YES| AD
+
+AH -->|NO| K
+
+
+AA --> AI["FINALLY"]
+
+AD --> AI
+
+AI --> AJ["Close page"]
+
+AJ --> AK{"skipSession?"}
+
+AK -->|YES| AL["Break inner roll loop"]
+
+AK -->|NO| AM["Wait 500ms"]
+
+AM --> K
+
+AL --> H
+
+H --> G
+
+G --> AN["Close browser"]
+
+AN --> AO["Print results table"]
+
+AO --> AP["Write results.json"]
+
+AP --> AQ([END])
+
+
+
+%% COLOR SCHEME
+
+classDef startEnd fill:#2ecc71,stroke:#145a32,color:white,font-weight:bold;
+
+classDef process fill:#3498db,stroke:#1b4f72,color:white;
+
+classDef loop fill:#9b59b6,stroke:#512e5f,color:white;
+
+classDef decision fill:#f1c40f,stroke:#7d6608,color:black;
+
+classDef success fill:#58d68d,stroke:#196f3d,color:black;
+
+classDef error fill:#e74c3c,stroke:#922b21,color:white;
+
+classDef extract fill:#17a2b8,stroke:#0b5345,color:white;
+
+
+%% APPLY COLORS
+
+class A,AQ startEnd;
+
+class B,C,D,E,F,I,J,L,M,N,O,P,Q,R,S,AN,AO,AP process;
+
+class G,H,K loop;
+
+class T,AC,AH,AK decision;
+
+class U,V,AA success;
+
+class AB,AD,AE,AF,AG error;
+
+class W,X,Y,Z extract;
+
+class AI,AJ,AL,AM process;
+
 ```
 
 ### Later version
 `checkCourse.js`
 
 extended version of checkuser.js which scraps all course data including serial number, course code, course title, creadit hour, grade, cgpa all together
+
+## CheckCourse.js Algorithm
 
 ```mermaid
 flowchart TD
@@ -155,7 +209,7 @@ session range, partition, failCheck"]
 
 C --> D["Define appendToJSON()"]
 
-D --> E["Check JSON file exists?"]
+D --> E{"JSON file exists?"}
 
 E -->|YES| F["Read existing JSON data"]
 E -->|NO| G["Create empty data array"]
@@ -166,30 +220,29 @@ G --> H
 H --> I["Push new data and write JSON file"]
 
 I --> J["Define retry() function<br/>
-Retry failed operations 3 times"]
+Retry failed operations"]
 
 J --> K["Launch Puppeteer Browser"]
 
 K --> L["Initialize variables<br/>
-unchanged = []<br/>
-lastSuccessRoll = rollStart"]
+unchanged=[]<br/>
+lastSuccessRoll=rollStart"]
 
-L --> M{"FOR year = sessionStart to sessionEnd"}
+L --> M{"FOR year = sessionStart → sessionEnd"}
 
-M --> N{"FOR term = 01, 03"}
+M --> N{"FOR term = 01,03"}
 
-N --> O["Create session ID<br/>year + term"]
+N --> O["Create session ID"]
 
-O --> P["failureCount = 0<br/>skipSession = false"]
+O --> P["failureCount=0<br/>skipSession=false"]
 
-P --> Q{"FOR roll = lastSuccessRoll to rollEnd"}
+P --> Q{"FOR roll = lastSuccessRoll → rollEnd"}
 
-Q --> R["Generate User ID<br/>
-department + session + partition + roll"]
+Q --> R["Generate User ID"]
 
-R --> S["Create new browser page"]
+R --> S["Create browser page"]
 
-S --> T["Set navigation timeout 20 seconds"]
+S --> T["Set timeout 20 seconds"]
 
 T --> U["TRY"]
 
@@ -197,16 +250,14 @@ U --> V["Open login page using retry()"]
 
 V --> W["Enter username and password"]
 
-W --> X["Click submit and wait navigation"]
+W --> X["Submit login"]
 
 X --> Y{"URL contains panel?"}
 
 
 Y -->|YES| Z["Login Success"]
 
-Z --> AA["Reset failureCount = 0<br/>
-Update lastSuccessRoll<br/>
-Increase successCount"]
+Z --> AA["Reset failureCount<br/>Update roll<br/>successCount++"]
 
 AA --> AB["Open overall result page"]
 
@@ -218,65 +269,92 @@ AD --> AE["Extract Course Table"]
 
 AE --> AF["Extract CGPA"]
 
-AF --> AG["Create student data object"]
+AF --> AG["Create student object"]
 
-AG --> AH["appendToJSON(data)"]
+AG --> AH["Save data using appendToJSON"]
 
 AH --> AI["Logout"]
 
-AI --> AJ["Continue"]
 
-Y -->|NO| AK["Login Failed<br/>failureCount++"]
+Y -->|NO| AJ["Login Failed<br/>failureCount++"]
 
+AJ --> AK{"failureCount >= failCheck?"}
 
-AK --> AL{"failureCount >= failCheck?"}
+AK -->|YES| AL["skipSession=true<br/>Break session"]
 
-AL -->|YES| AM["skipSession = true<br/>Break roll loop"]
-
-AL -->|NO| AJ
+AK -->|NO| AM["Continue loop"]
 
 
 U --> AN["CATCH Error"]
 
-AN --> AO["Increase failureCount"]
+AN --> AO["failureCount++"]
 
 AO --> AP["Print timeout/error"]
 
 AP --> AQ{"failureCount >= failCheck?"}
 
-AQ -->|YES| AM
+AQ -->|YES| AL
 
-AQ -->|NO| AJ
+AQ -->|NO| AM
 
 
-AJ --> AR["FINALLY"]
+AI --> AR["FINALLY"]
 
-AM --> AR
+AL --> AR
 
 AR --> AS["Close browser page"]
 
 AS --> AT{"skipSession?"}
 
-AT -->|YES| AU["Break current session"]
+AT -->|YES| AU["Break roll loop"]
 
-AT -->|NO| AV["Wait 500ms throttle"]
+AT -->|NO| AV["Wait 500ms"]
 
 AV --> Q
 
 AU --> N
 
-N -->|Next term| N
-
 N --> M
-
-M -->|Next year| M
-
 
 M --> AW["Close browser"]
 
 AW --> AX["Print COMPLETE"]
 
 AX --> AY([END])
+
+
+%% COLORS
+
+classDef startEnd fill:#2ecc71,stroke:#145a32,color:white,font-weight:bold;
+
+classDef process fill:#3498db,stroke:#1b4f72,color:white;
+
+classDef loop fill:#9b59b6,stroke:#512e5f,color:white;
+
+classDef decision fill:#f1c40f,stroke:#7d6608,color:black;
+
+classDef success fill:#58d68d,stroke:#196f3d,color:black;
+
+classDef error fill:#e74c3c,stroke:#922b21,color:white;
+
+classDef extract fill:#17a2b8,stroke:#0b5345,color:white;
+
+
+%% APPLY COLORS
+
+class A,AY startEnd;
+
+class B,C,D,F,G,H,I,J,K,L,O,P,R,S,T,U,V,W,X,AM,AR,AS,AV,AW,AX process;
+
+class M,N,Q loop;
+
+class E,Y,AK,AQ,AT decision;
+
+class Z,AA,AI success;
+
+class AJ,AL,AN,AO,AP error;
+
+class AC,AD,AE,AF,AG,AH extract;
 
 ```
 
