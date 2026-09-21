@@ -270,7 +270,9 @@
       const headers = parsedRows[0].map(header => header.replace(/^\uFEFF/, "").trim());
       const objects = parsedRows.slice(1).map(values => {
         const object = {};
-        headers.forEach((header, index) => { object[header] = values[index] ?? ""; });
+        // Rainbow-style exports align fields with padding. Remove it while importing so
+        // IDs such as " CSE160320001 " can be read as the CSE department.
+        headers.forEach((header, index) => { object[header] = String(values[index] ?? "").trim(); });
         return object;
       });
       return { headers, objects };
