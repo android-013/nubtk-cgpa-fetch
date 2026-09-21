@@ -26,7 +26,7 @@ https://nubtkhulna.ac.bd/ter/panel/overallresult
 | `dna.csv`         | Dna analysis clustering                                          |
 | `clean.js`        | Clean all students course data                                   |
 | `clean.csv`       | Combined cleaned data                                            |
-|-------------------|------------------------------------------------------------------|
+|||
 | `arch.json`       | Architecture department                                          |
 | `bba.json`        | Business Administration department                               |
 | `ce.json`         | Civil Engineering department                                     |
@@ -34,7 +34,7 @@ https://nubtkhulna.ac.bd/ter/panel/overallresult
 | `eee.json`        | Electrical and Electronic Engineering department                 |
 | `ell.json`        | English Language & Literature department                         |
 | `jmc.json`        | Journalism and Mass Communication department                     |
-|-------------------|------------------------------------------------------------------|
+|||
 | `arch25.json`     | Architecture department upto fall 2025                           |
 | `bba25.json`      | Business Administration department upto fall 2025                |
 | `ce25.json`       | Civil Engineering department upto fall 2025                      |
@@ -42,7 +42,7 @@ https://nubtkhulna.ac.bd/ter/panel/overallresult
 | `eee25.json`      | Electrical and Electronic Engineering department upto fall 2025  |
 | `ell25.json`      | English Language & Literature department upto fall 2025          |
 | `jmc25.json`      | Journalism and Mass Communication department upto fall 2025      |
-|-------------------|------------------------------------------------------------------|
+|||
 | `archC.json`      | Architecture department with Courses                             |
 | `bbaC.json`       | Business Administration department with Courses                  |
 | `ceC.json`        | Civil Engineering department with Courses                        |
@@ -50,8 +50,8 @@ https://nubtkhulna.ac.bd/ter/panel/overallresult
 | `eeeC.json`       | Electrical and Electronic Engineering department with Courses    |
 | `ellC.json`       | English Language & Literature department with Courses            |
 | `jmcC.json`       | Journalism and Mass Communication department with Courses        |
-|-------------------|------------------------------------------------------------------|
-  
+|||
+
 
 - `npm.json`, `package.json`: Node.js project configuration and dependencies.
 
